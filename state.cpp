@@ -4,7 +4,29 @@
 using namespace std;
 
 // Map
+void Map::set_length(int length) {
+	length = length;
+}
 
+void Map::set_width(int width) {
+	width = width;
+}
+
+void Map::set_time(bool night) {
+	night = night;
+}
+int Map::get_length()const {
+	return length;
+
+}
+
+int Map::get_width()const {
+	return width;
+}
+
+bool Map::get_time()const {
+	return night;
+}
 
 // Creature
 void Creature::movement(State state, KeyState keys){

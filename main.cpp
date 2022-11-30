@@ -28,9 +28,12 @@ int main() {
 
 	board(x, y);
 
-	Map* ptr;
-	ptr = new Map(x, y, false);
-	ptr->display();
+	Map* ptr = new Map;
+	ptr->set_length(x);
+	ptr->set_width(y);
+	ptr->set_time(false);
+
+
 
 
 }
