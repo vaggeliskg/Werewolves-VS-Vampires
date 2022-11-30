@@ -1,8 +1,8 @@
 #include <iostream>
-
+#include "state.h"
 using namespace std;
 
+
 int main() {
-    cout << "Hello world of di";
-    return 0;
+	cout << "hi";
 }

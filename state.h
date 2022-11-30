@@ -1,4 +1,5 @@
-#pragma once
+ο»Ώ#pragma once
+
 #include <vector>
 
 // Information about which keys are pressed
@@ -21,7 +22,7 @@ typedef struct state_info {
     bool paused;					// true if game is paused
 }*StateInfo;
 
-// Η κατάσταση του παιχνιδιού (handle)
+// Ξ— ΞΊΞ±Ο„Ξ¬ΟƒΟ„Ξ±ΟƒΞ· Ο„ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ (handle)
 typedef struct state* State;
 
 // Coordinates
@@ -32,9 +33,18 @@ typedef struct point {
 
 // Map of the game
 class Map {
+private:
     int length;
     int width;
     bool night;                     // night or day
+public:
+    void set_lenght(int);
+    void set_width(int);
+    void set_time(bool);
+
+    int get_length()const;
+    int get_width()const;
+    bool get_time()const;
 
 };
 
