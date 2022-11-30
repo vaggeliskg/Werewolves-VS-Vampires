@@ -29,13 +29,8 @@ int main() {
 	board(x, y);
 
 	Map* ptr;
-	ptr = new Map;
-	ptr->set_length(x);
-	ptr->set_width(y);
-	ptr->set_time(false);
-
-	cout << (*ptr).get_length();
-
+	ptr = new Map(x, y, false);
+	ptr->display();
 
 
 }

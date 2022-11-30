@@ -1,6 +1,9 @@
 ﻿#pragma once
 
 #include <vector>
+#include <iostream>
+
+using namespace std;
 
 // Information about which keys are pressed
 typedef struct key_state {
@@ -38,13 +41,21 @@ private:
     int width;
     bool night;                     // night or day
 public:
-    void set_length(int);
-    void set_width(int);
-    void set_time(bool);
+  //void set_length(int);
+  //void set_width(int);
+  //void set_time(bool);
+    Map(int a, int b, bool c) {
+        length = a;
+        width = b;
+        c = false;
+    }
+    void display() {
+        cout << length;
+    }
 
-    int get_length()const;
-    int get_width()const;
-    bool get_time()const;
+  //int get_length()const;
+ // int get_width()const;
+ //bool get_time()const;
 
 };
 
