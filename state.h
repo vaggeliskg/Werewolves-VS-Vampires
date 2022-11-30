@@ -38,7 +38,7 @@ private:
     int width;
     bool night;                     // night or day
 public:
-    void set_lenght(int);
+    void set_length(int);
     void set_width(int);
     void set_time(bool);
 
