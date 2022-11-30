@@ -4,16 +4,16 @@
 using namespace std;
 
 // Map
-void Map::set_length(int length) {
-	length = length;
+void Map::set_length(int lngt) {
+	length = lngt;
 }
 
-void Map::set_width(int width) {
-	width = width;
+void Map::set_width(int wdt) {
+	width = wdt;
 }
 
-void Map::set_time(bool night) {
-	night = night;
+void Map::set_time(bool a) {
+	night = a;
 }
 int Map::get_length()const {
 	return length;
@@ -34,8 +34,8 @@ void Creature::movement(State state, KeyState keys){
 
 }
 
-void Creature::set_position(Point position) {
-	position = position;
+void Creature::set_position(Point pos) {
+	position = pos;
 }
 
 Point Creature::get_position()const {
@@ -43,8 +43,8 @@ Point Creature::get_position()const {
 }
 
 // Object
-void Object::set_position(Point position) {
-	position = position;
+void Object::set_position(Point pos) {
+	position = pos;
 }
 
 Point Object::get_position()const {
@@ -52,8 +52,8 @@ Point Object::get_position()const {
 }
 
 // Avatar
-void Avatar::set_potions(int potions) {
-	potions = potions;
+void Avatar::set_potions(int ptns) {
+	potions = ptns;
 }
 
 int Avatar::get_potions()const {
@@ -77,16 +77,16 @@ void Werewolf::help(Werewolf*) {
 
 }
 
-void Werewolf::set_health(int health) {
-	health = health;
+void Werewolf::set_health(int h) {
+	health = h;
 }
 
-void Werewolf::set_strength(int strength) {
-	strength = strength;
+void Werewolf::set_strength(int strng) {
+	strength = strng;
 }
 
-void Werewolf::set_defence(int defence) {
-	defence = defence;
+void Werewolf::set_defence(int dfnc) {
+	defence = dfnc;
 }
 
 int Werewolf::get_health()const {
@@ -110,16 +110,16 @@ void Vampire::help(Vampire*) {
 
 }
 
-void Vampire::set_health(int health) {
-	health = health;
+void Vampire::set_health(int hlth) {
+	health = hlth;
 }
 
-void Vampire::set_strength(int strength) {
-	strength = strength;
+void Vampire::set_strength(int strng) {
+	strength = strng;
 }
 
-void Vampire::set_defence(int defence) {
-	defence = defence;
+void Vampire::set_defence(int dfnc) {
+	defence = dfnc;
 }
 
 int Vampire::get_health()const {

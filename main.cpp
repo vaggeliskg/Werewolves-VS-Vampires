@@ -32,7 +32,8 @@ int main() {
 	ptr->set_length(x);
 	ptr->set_width(y);
 	ptr->set_time(false);
-
+	cout << ptr->get_length() << "x";
+	cout << ptr->get_width() << endl;
 
 
 
