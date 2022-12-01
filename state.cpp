@@ -169,8 +169,19 @@ Vampire* create_v(int x, int y) {
 	return v;
 }
 
+// Creates avatar
+Avatar* create_avatar(int x, int y) {
+	Avatar* avatar = new Avatar;
+	Point position = new point;
+	position->x = (rand() % x) + (x / 4);
+	position->y = (rand() % y) + (y / 4);
+	avatar->set_position(position);
+}
+
+
 // Adds created objects in vectors
 static void add(State state, int x, int y) {
+	Avatar* avatar = create_avatar(x, y);
 	for (int i = 0; i < x * y / 15; i++) {
 		Werewolf* w = create_w(x,y);
 		Vampire* v = create_v(x, y);
