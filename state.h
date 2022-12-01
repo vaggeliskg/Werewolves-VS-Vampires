@@ -1,6 +1,10 @@
 ﻿#pragma once
-
+#include <iostream>
 #include <vector>
+
+using namespace std;
+
+typedef struct state* State;
 
 // Information about which keys are pressed
 typedef struct key_state {
@@ -15,15 +19,15 @@ typedef struct key_state {
 
 // General information about the game
 typedef struct state_info {
-    int number_W;                   // number of Werewolves that are still alive
-    int number_V;                   // number of Vampires that are still alive
-    bool Team_W;                    // true for team Werewolves, false for team Vampires
-    bool playing;					// true if game has started (false after game over)
-    bool paused;					// true if game is paused
+    int number_W = 0;                   // number of Werewolves that are still alive
+    int number_V = 0;                   // number of Vampires that are still alive
+    bool Team_W = false;                    // true for team Werewolves, false for team Vampires
+    bool playing = false;					// true if game has started (false after game over)
+    bool paused = false;					// true if game is paused
 }*StateInfo;
 
 // Η κατάσταση του παιχνιδιού (handle)
-typedef struct state* State;
+
 
 // Coordinates
 typedef struct point {
@@ -118,6 +122,20 @@ class Water :public Object {};
 
 class Potion :public Object {};
 
-State state_create();
+// Η κατάσταση του παιχνιδιού (handle)
+struct state {
+    struct state_info info;
+    vector <Werewolf> Ww;
+    vector <Vampire> Vp;
+    vector <Avatar> At;
+    vector <Tree> Tr;
+    vector <Water> Wt;
+    vector <Potion> Pt;
+};
+
+
+
+State state_create(int x,int y);
 StateInfo state_info(State state);
 void state_update(State state, KeyState keys);
+

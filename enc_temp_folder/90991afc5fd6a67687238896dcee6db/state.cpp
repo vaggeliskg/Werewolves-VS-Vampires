@@ -142,7 +142,7 @@ Werewolf* create_w(int x, int y ) {
 	int health = (rand() % 6) + 2;
 	int strength = (rand() % 3) + 1;
 	int defense = (rand() % 2) + 1;
-	Point position;
+	Point position = NULL;
 	position->x = (rand() % x) + (x / 4);
 	position->y = (rand() % y) + (y / 4);
 	w->set_health(health);
