@@ -176,17 +176,55 @@ Avatar* create_avatar(int x, int y) {
 	position->x = (rand() % x) + (x / 4);
 	position->y = (rand() % y) + (y / 4);
 	avatar->set_position(position);
+
+	return avatar;
 }
 
+// Creates tree
+Tree* create_tree(int x, int y) {
+	Tree* tree = new Tree;
+	Point position = new point;
+	position->x = (rand() % x) + (x / 4);
+	position->y = (rand() % y) + (y / 4);
+	tree->set_position(position);
+
+	return tree;
+}
+
+// Creates water
+Water* create_water(int x, int y) {
+	Water* water = new Water;
+	Point position = new point;
+	position->x = (rand() % x) + (x / 4);
+	position->y = (rand() % y) + (y / 4);
+	water->set_position(position);
+
+	return water;
+}
+
+// Creates potion
+Potion* create_potion(int x, int y) {
+	Potion* potion = new Potion;
+	Point position = new point;
+	position->x = (rand() % x) + (x / 4);
+	position->y = (rand() % y) + (y / 4);
+	potion->set_position(position);
+
+	return potion;
+}
 
 // Adds created objects in vectors
 static void add(State state, int x, int y) {
-	Avatar* avatar = create_avatar(x, y);
-	for (int i = 0; i < x * y / 15; i++) {
+	Avatar* avatar = create_avatar(x, y);			// Create Avatar
+	for (int i = 0; i < x * y / 15; i++) {			// Create x*y/15 Werewolves and Vampires
 		Werewolf* w = create_w(x,y);
 		Vampire* v = create_v(x, y);
 	}
-
+	for (int i = 0; i < 5; i++) {					// Create i Trees and Water
+		Tree* tree = create_tree(x, y);
+		Water* water = create_water(x, y);
+	}
+	Potion* potion = create_potion(x, y);			// Create potion
 
 
 
