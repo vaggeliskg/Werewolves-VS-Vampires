@@ -4,8 +4,6 @@
 
 using namespace std;
 
-
-
 // Map
 void Map::set_length(int lngt) {
 	length = lngt;
@@ -137,6 +135,7 @@ int Vampire::get_defence()const {
 	return defence;
 }
 
+// Creates a werewolf
 Werewolf* create_w(int x, int y ) {
 	Werewolf* w = new Werewolf;
 	int health = (rand() % 6) + 2;
@@ -153,7 +152,7 @@ Werewolf* create_w(int x, int y ) {
 	return w;
 }
 
-
+// Adds created objects in vectors
 static void add(State state, int x, int y) {
 	for (int i = 0; i < x * y / 15; i++) {
 		Werewolf* w = create_w(x,y);
@@ -185,7 +184,7 @@ State state_create(int x , int y) {
 }
 
 StateInfo state_info(State state) {
-	return NULL;
+	return &state->info;
 }
 
 void state_update(State state, KeyState keys) {

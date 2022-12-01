@@ -18,9 +18,9 @@ void board(int x, int y) {
 int main() {
 	int x, y;
 	cout << "Welcome to Werewolves vs Vampires\n";
-	cout << "Please provide the length of the map: ";
+	cout << "Please type the length of the map: ";
 	cin >> x;
-	cout << "Please provide the width of the map: ";
+	cout << "Please type the width of the map: ";
 	cin >> y;
 	cout << "\n";
 
@@ -33,7 +33,7 @@ int main() {
 	ptr->set_width(y);
 	ptr->set_time(false);
 
-	cout << ptr->get_length();
+	cout << "Map is: " << ptr->get_length() << "x" << ptr->get_width();
 
 
 }
