@@ -138,7 +138,7 @@ int Vampire::get_defence()const {
 // Creates a werewolf
 Werewolf* create_w(int x, int y ) {
 	Werewolf* w = new Werewolf;
-	int health = (rand() % 6) + 2;
+	int health = (rand() % 2) + 1;
 	int strength = (rand() % 3) + 1;
 	int defense = (rand() % 2) + 1;
 	Point position = new point;
@@ -152,10 +152,28 @@ Werewolf* create_w(int x, int y ) {
 	return w;
 }
 
+// Creates a vampire
+Vampire* create_v(int x, int y) {
+	Vampire* v = new Vampire;
+	int health = (rand() % 2) + 1;
+	int strength = (rand() % 3) + 1;
+	int defense = (rand() % 2) + 1;
+	Point position = new point;
+	position->x = (rand() % x) + (x / 4);
+	position->y = (rand() % y) + (y / 4);
+	v->set_health(health);
+	v->set_strength(strength);
+	v->set_defence(defense);
+	v->set_position(position);
+
+	return v;
+}
+
 // Adds created objects in vectors
 static void add(State state, int x, int y) {
 	for (int i = 0; i < x * y / 15; i++) {
 		Werewolf* w = create_w(x,y);
+		Vampire* v = create_v(x, y);
 	}
 
 
