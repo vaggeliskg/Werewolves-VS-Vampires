@@ -33,7 +33,7 @@ int main() {
 	ptr->set_width(y);
 	ptr->set_time(false);
 
-
+	cout << ptr->get_length();
 
 
 }

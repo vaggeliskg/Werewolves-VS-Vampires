@@ -4,8 +4,8 @@
 using namespace std;
 
 // Map
-void Map::set_length(int length) {
-	length = length;
+void Map::set_length(int a) {
+	length = a;
 }
 
 void Map::set_width(int width) {
