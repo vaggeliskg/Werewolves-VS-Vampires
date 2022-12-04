@@ -30,9 +30,83 @@ bool Map::get_time()const {
 }
 
 // Creature
-void Creature::movement(State state, KeyState keys){
+void Avatar::movement(State state, KeyState keys){
+	Avatar* avatar = state->At.at(0);
+	Point p = avatar->get_position();
+	if (keys->up) {
+		p->y--;									//might need some else if instead of if(to be fixed)
+		avatar->set_position(p);
+	}
+	if (keys->down) {
+		p->y++;
+		avatar->set_position(p);
+	}
+	if (keys->left) {
+		p->x--;
+		avatar->set_position(p);
+	}
+	if (keys->right) {
+		p->x++;
+		avatar->set_position(p);
+	}
 
+}
 
+void Creature::movement(State state,int i, bool Wf) {
+	//decide its movement + check that it does not go out of the map's border
+	if (Wf == true) {
+		Werewolf* w = state->Ww.at(i);
+		Point place = w->get_position();
+		int decide = rand() % 5;
+		switch (decide) {
+		case 0:
+			place->x++;
+			w->set_position(place);
+			break;
+		case 1:
+			place->x--;
+			w->set_position(place);
+			break;
+		case 2:
+			place->y++;
+			w->set_position(place);
+			break;
+		case 3:
+			place->y--;
+			w->set_position(place);
+			break;
+		case 4:
+			//stand still
+			break;
+		}
+		
+	}
+	else {
+		Vampire* v = state->Vp.at(i);
+		Point place = v->get_position();
+		int decide = rand() % 5;
+		switch (decide) {
+		case 0:
+			place->x++;
+			v->set_position(place);
+			break;
+		case 1:
+			place->x--;
+			v->set_position(place);
+			break;
+		case 2:
+			place->y++;
+			v->set_position(place);
+			break;
+		case 3:
+			place->y--;
+			v->set_position(place);
+			break;
+		case 4:
+			//stand still
+			break;
+		}
+	}
 }
 
 void Creature::set_position(Point pos) {
@@ -136,7 +210,7 @@ int Vampire::get_defence()const {
 }
 
 // Creates a werewolf
-Werewolf* create_w(int x, int y ) {
+static Werewolf* create_w(int x, int y ) {
 	Werewolf* w = new Werewolf;
 	int health = (rand() % 2) + 1;
 	int strength = (rand() % 3) + 1;
@@ -153,24 +227,24 @@ Werewolf* create_w(int x, int y ) {
 }
 
 // Creates a vampire
-Vampire* create_v(int x, int y) {
+static Vampire* create_v(int x, int y) {
 	Vampire* v = new Vampire;
 	int health = (rand() % 2) + 1;
 	int strength = (rand() % 3) + 1;
 	int defense = (rand() % 2) + 1;
 	Point position = new point;
 	position->x = (rand() % x) + (x / 4);
-	position->y = (rand() % y) + (y / 4);
+ 	position->y = (rand() % y) + (y / 4);
 	v->set_health(health);
 	v->set_strength(strength);
 	v->set_defence(defense);
 	v->set_position(position);
-
-	return v;
+											//nomizw edw tha prepei na kanoyme deallocate to position
+	return v;								// + kapoious elegxous gia na min exei themata sto interface
 }
 
 // Creates avatar
-Avatar* create_avatar(int x, int y) {
+static Avatar* create_avatar(int x, int y) {
 	Avatar* avatar = new Avatar;
 	Point position = new point;
 	position->x = (rand() % x) + (x / 4);
@@ -181,7 +255,7 @@ Avatar* create_avatar(int x, int y) {
 }
 
 // Creates tree
-Tree* create_tree(int x, int y) {
+static Tree* create_tree(int x, int y) {
 	Tree* tree = new Tree;
 	Point position = new point;
 	position->x = (rand() % x) + (x / 4);
@@ -192,7 +266,7 @@ Tree* create_tree(int x, int y) {
 }
 
 // Creates water
-Water* create_water(int x, int y) {
+static Water* create_water(int x, int y) {
 	Water* water = new Water;
 	Point position = new point;
 	position->x = (rand() % x) + (x / 4);
@@ -203,7 +277,7 @@ Water* create_water(int x, int y) {
 }
 
 // Creates potion
-Potion* create_potion(int x, int y) {
+static Potion* create_potion(int x, int y) {
 	Potion* potion = new Potion;
 	Point position = new point;
 	position->x = (rand() % x) + (x / 4);
@@ -216,17 +290,29 @@ Potion* create_potion(int x, int y) {
 // Adds created objects in vectors
 static void add(State state, int x, int y) {
 	Avatar* avatar = create_avatar(x, y);			// Create Avatar
+	state->At.push_back(avatar);
 	for (int i = 0; i < x * y / 15; i++) {			// Create x*y/15 Werewolves and Vampires
 		Werewolf* w = create_w(x,y);
 		Vampire* v = create_v(x, y);
+		state->Ww.push_back(w);
+		state->Vp.push_back(v);
+
+		state->info.number_V++;
+		state->info.number_W++;
+
+
 	}
 	for (int i = 0; i < 5; i++) {					// Create i Trees and Water
 		Tree* tree = create_tree(x, y);
 		Water* water = create_water(x, y);
+
+		state->Tr.push_back(tree);
+		state->Wt.push_back(water);
+
 	}
 	Potion* potion = create_potion(x, y);			// Create potion
 
-
+	state->Pt.push_back(potion);
 
 }
 
@@ -234,16 +320,21 @@ static void add(State state, int x, int y) {
 
 
 // More
-State state_create(int x , int y) {
+State state_create(Map* m) {
 	state *s = new state;
 	s->info.playing = true;
 	s->info.paused = false;
 	s->info.number_V = 0;
 	s->info.number_W = 0;
-	//s->info.Team_W = false;
+	s->info.Team_W = false;
+	s->map = m;
+	s->map->set_length(m->get_length());
+	s->map->set_width(m->get_width());
+	s->map->set_time(m->get_time());
 
 
-	add(s, x, y);
+
+	add(s, s->map->get_length(), s->map->get_width());
 
 
 
@@ -254,7 +345,25 @@ StateInfo state_info(State state) {
 	return &state->info;
 }
 
-void state_update(State state, KeyState keys) {
+void state_update(State state, KeyState keys, Avatar* avatar) {
+	if (state->info.playing) {
+			avatar->movement(state, keys); //thelei virtual, override klp
 
+
+			for (int i = 0; i < state->Ww.size(); i++) {
+				Werewolf* w = state->Ww.at(i);
+				w->movement(state, i, true); //0 for w , 1 for v thelei alli methodo tha to skefto meta
+			}
+
+			for (int i = 0; i < state->Vp.size(); i++) {
+				Vampire* v = state->Vp.at(i);
+				v->movement(state, i, false); //0 for w , 1 for v thelei alli methodo tha to skefto meta
+			}
+
+			 
+
+
+
+	}
 }
 

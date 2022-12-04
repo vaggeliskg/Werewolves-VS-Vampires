@@ -33,7 +33,8 @@ int main() {
 	ptr->set_width(y);
 	ptr->set_time(false);
 
-	cout << "Map is: " << ptr->get_length() << "x" << ptr->get_width();
+	cout << "Map is: " << ptr->get_length() << " x " << ptr->get_width();
 
+	State state = state_create(ptr);
 
 }
