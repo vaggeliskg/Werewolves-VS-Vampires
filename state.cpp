@@ -34,7 +34,7 @@ void Avatar::movement(State state, KeyState keys){
 	Avatar* avatar = state->At.at(0);
 	Point p = avatar->get_position();
 	if (keys->up) {
-		p->y--;									//might need some else if instead of if(to be fixed)
+		p->y--;													// might need some else if instead of if(to be fixed)
 		avatar->set_position(p);
 	}
 	if (keys->down) {
@@ -136,21 +136,45 @@ int Avatar::get_potions()const {
 	return potions;
 }
 
-void Avatar::help_W(Werewolf*) {
-
+void Avatar::help_W(Werewolf* werewolf) {						// Help creature werewolf by adding 1 more health value
+	int prev_health = werewolf->get_health();
+	if (prev_health < 2) {										// If health is not max
+		werewolf->set_health(prev_health + 1);					// Then new health is previous value + 1
+	}
 }
 
-void Avatar::help_V(Vampire*) {
-
+void Avatar::help_V(Vampire* vampire) {							// Help creature vampire by adding 1 more health value
+	int prev_health = vampire->get_health();
+	if (prev_health < 2) {										// If health is not max
+		vampire->set_health(prev_health + 1);					// Then new health is previous value + 1
+	}
 }
 
 // Werewolf
-void Werewolf::attack(Vampire*) {
-
+void Werewolf::attack(Vampire* vampire) {
+	int attack_value = this->get_strength();					// Strength value
+	if (attack_value >= vampire->get_strength()) {				// If strength value is bigger that it's opponent's, attack
+		int damage = this->get_strength() - vampire->get_defence();	// Damage value
+		if (damage > 0) {										// If strength value is bigger than opponent's defence value
+			vampire->set_health(vampire->get_health() - damage);
+		}
+	}
+	// Else go away
 }
 
-void Werewolf::help(Werewolf*) {
-
+void Werewolf::help(Werewolf* werewolf) {
+	int random = rand() % 2;									// Select randomly if a creature is going to help its ally
+	switch (random) {
+	case 0:
+		if (this->get_health() > 1 && werewolf->get_health() < 2) {	// If health is >=2 and health of ally is not max=2
+			werewolf->set_health(werewolf->get_health() + 1);	// Health of another creature +1
+			this->set_health(this->get_health() - 1);			// Health of this creature -1
+		}
+		break;
+	case 1:
+		// do nothing
+		break;
+	}
 }
 
 void Werewolf::set_health(int h) {
@@ -178,12 +202,30 @@ int Werewolf::get_defence()const {
 }
 
 // Vampire
-void Vampire::attack(Werewolf*) {
-
+void Vampire::attack(Werewolf* werewolf) {
+	int attack_value = this->get_strength();					// Strength value
+	if (attack_value >= werewolf->get_strength()) {				// If strength value is bigger that it's opponent's, attack
+		int damage = this->get_strength() - werewolf->get_defence();	// Damage value
+		if (damage > 0) {										// If strength value is bigger than opponent's defence value
+			werewolf->set_health(werewolf->get_health() - damage);
+		}
+	}
+	// else go away
 }
 
-void Vampire::help(Vampire*) {
-
+void Vampire::help(Vampire* vampire) {
+	int random = rand() % 2;									// Select randomly if a creature is going to help its ally
+	switch (random) {
+	case 0:
+		if (this->get_health() > 1 && vampire->get_health() < 2) {	// If health is >=2 and health of ally is not max=2
+			vampire->set_health(vampire->get_health() + 1);		// Health of another creature +1
+			this->set_health(this->get_health() - 1);			// Health of this creature -1
+		}
+		break;
+	case 1:
+		// do nothing
+		break;
+	}
 }
 
 void Vampire::set_health(int hlth) {
