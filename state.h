@@ -55,7 +55,7 @@ class Creature {
 protected:
     Point position;                         // position in map
 public:
-    void movement(State state, int first,bool ct);
+    void movement(State state, int first, bool ct);
     void set_position(Point position);
     Point get_position()const;
 };
@@ -76,8 +76,8 @@ class Avatar :public Creature {
 private:
     int potions = 1;                        // number of potions [0,2]
 public:
-    void set_potions(int potions);
     void movement(State state, KeyState keys);
+    void set_potions(int potions);
     int get_potions()const;
     void help_W(Werewolf*);
     void help_V(Vampire*);
@@ -136,7 +136,7 @@ struct state {
 
 // More
 // Creates and returns the state of the game
-State state_create(Map*);
+State state_create(Map* map);
 
 // Returns game information to state
 StateInfo state_info(State state);

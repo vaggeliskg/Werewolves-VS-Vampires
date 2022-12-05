@@ -29,7 +29,7 @@ bool Map::get_time()const {
 	return night;
 }
 
-// Creature
+// Avatar
 void Avatar::movement(State state, KeyState keys){
 	Avatar* avatar = state->At.at(0);
 	Point p = avatar->get_position();
@@ -52,6 +52,7 @@ void Avatar::movement(State state, KeyState keys){
 
 }
 
+// Creature
 void Creature::movement(State state,int i, bool Wf) {
 	//decide its movement + check that it does not go out of the map's border
 	if (Wf == true) {
@@ -209,6 +210,7 @@ int Vampire::get_defence()const {
 	return defence;
 }
 
+// Extra functions that create objects. They are used below in function: add()
 // Creates a werewolf
 static Werewolf* create_w(int x, int y ) {
 	Werewolf* w = new Werewolf;
