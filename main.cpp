@@ -4,12 +4,19 @@
 using namespace std;
 
 // Print board of game
-void board(int x, int y) {
+void board(int x, int y, State state) {
 
 	for (int i = 0; i < y; i++) {
-		cout << "\t\t#";
-		for (int j = 0; j < x - 2; j++) {
+		cout << "#";
+		for (int j = 0; j < x - 2 ; j++) {
+			for (int k = 0; k < state->Ww.size(); k++) {
+				if (i == state->Ww.at(k)->get_position()->y && j == state->Ww.at(k)->get_position()->x) cout << 'W';
+			}
+			for (int k = 0; k < state->Vp.size(); k++) {
+				if (i == state->Vp.at(k)->get_position()->y && j == state->Vp.at(k)->get_position()->x) cout << 'V';
+			}
 			if (i == 0 || i == y - 1) cout << "#";
+			else if (i == state->At.at(0)->get_position()->y && j == state->At.at(0)->get_position()->x) cout << "A";
 			else cout << ' ';
 		}
 		cout << "#\n";
@@ -54,7 +61,7 @@ int main() {
 
 	system("cls");
 
-	board(x, y);
+	//board(x, y);
 
 	// Printing results for test debugging
 	cout << "Map is: " << ptr->get_length() << "x" << ptr->get_width() << endl;
@@ -63,6 +70,33 @@ int main() {
 	}
 	else {
 		cout << "Team: Vampires\n";
+	}
+
+
+	system("cls");
+
+	//cout << state->At.at(0)->get_position()->y; "\n";
+	//cout << state->At.at(0)->get_position()->x; "\n";
+
+	while (true) {
+		board(x, y, state);
+		state_update(state, state->At.at(0));
+		if (_kbhit) {
+
+			switch (_getch()) {
+			case 'w': state->At.at(0)->change('w'); break;
+			case 'd': state->At.at(0)->change('d'); break;
+			case 's': state->At.at(0)->change('s'); break;
+			case 'a': state->At.at(0)->change('a'); break;
+			}
+
+			//cout << state->Vp.size(); "\n";
+			//cout << state->Ww.size(); "\n";
+
+		}
+
+		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { 0, 0 });
+
 	}
 
 

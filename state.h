@@ -79,6 +79,7 @@ private:
     int potions = 1;                        // Number of potions [0,2]
 public:
     void movement(State state, KeyState keys);
+    void change(char dir);
     void set_potions(int potions);
     int get_potions()const;
     void help_W(Werewolf*);                 // Helps creature Werewolf by adding 1 more health value
@@ -144,5 +145,5 @@ State state_create(Map* map);
 StateInfo state_info(State state);
 
 // Updates the state of the game depending the keys that are pressed
-void state_update(State state, KeyState keys, Avatar* avatar);
+void state_update(State state, Avatar* avatar);
 

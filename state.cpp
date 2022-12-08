@@ -29,6 +29,16 @@ bool Map::get_time()const {
 	return night;
 }
 
+void Avatar::change(char b) {
+	Point p = this->get_position();
+	switch (b) {
+	case 'w': p->y--;  this->set_position(p); break;
+	case 's': p->y++;  this->set_position(p);  break;
+	case 'd': p->x++;  this->set_position(p); break;
+	case 'a': p->x--;  this->set_position(p); break;
+	}
+}
+
 // Avatar
 void Avatar::movement(State state, KeyState keys){
 	Avatar* avatar = state->At.at(0);
@@ -61,20 +71,28 @@ void Creature::movement(State state,int i, bool Wf) {
 		int decide = rand() % 5;
 		switch (decide) {
 		case 0:
-			place->x++;
-			w->set_position(place);
+			if (place->x  < state->map->get_width() - 2) {
+				place->x++;
+				w->set_position(place);
+			}
 			break;
 		case 1:
-			place->x--;
-			w->set_position(place);
+			if (place->x > 1) {
+				place->x--;
+				w->set_position(place);
+			}	
 			break;
 		case 2:
-			place->y++;
-			w->set_position(place);
+			if (place->y < state->map->get_length() - 2) {
+				place->y++;
+				w->set_position(place);
+			}
 			break;
 		case 3:
-			place->y--;
-			w->set_position(place);
+			if (place->y > 1) {
+				place->y--;
+				w->set_position(place);
+			}
 			break;
 		case 4:
 			//stand still
@@ -326,8 +344,8 @@ static Werewolf* create_w(int x, int y ) {
 	int strength = (rand() % 3) + 1;
 	int defense = (rand() % 2) + 1;
 	Point position = new point;
-	position->x = (rand() % x) + (x / 4);
-	position->y = (rand() % y) + (y / 4);
+	position->x = (rand() % (x-1)) + 1; //+ (x / 4);
+	position->y = (rand() % (y-1)) + 1; //+ (y / 4);
 	w->set_health(health);
 	w->set_strength(strength);
 	w->set_defence(defense);
@@ -343,8 +361,8 @@ static Vampire* create_v(int x, int y) {
 	int strength = (rand() % 3) + 1;
 	int defense = (rand() % 2) + 1;
 	Point position = new point;
-	position->x = (rand() % x) + (x / 4);
- 	position->y = (rand() % y) + (y / 4);
+	position->x = (rand() % (x-1)) + 1; //(x / 4);
+	position->y = (rand() % (y-1)) + 1; //(y / 4);
 	v->set_health(health);
 	v->set_strength(strength);
 	v->set_defence(defense);
@@ -357,8 +375,8 @@ static Vampire* create_v(int x, int y) {
 static Avatar* create_avatar(int x, int y) {
 	Avatar* avatar = new Avatar;
 	Point position = new point;
-	position->x = (rand() % x) + (x / 4);
-	position->y = (rand() % y) + (y / 4);
+	position->x = (rand() % (x - 1)) + 1; //(x / 4);
+	position->y = (rand() % (y - 1)) + 1; //(y / 4);
 	avatar->set_position(position);
 
 	return avatar;
@@ -368,8 +386,8 @@ static Avatar* create_avatar(int x, int y) {
 static Tree* create_tree(int x, int y) {
 	Tree* tree = new Tree;
 	Point position = new point;
-	position->x = (rand() % x) + (x / 4);
-	position->y = (rand() % y) + (y / 4);
+	position->x = (rand() % (x - 1)) + 1; //+ (x / 4);
+	position->y = (rand() % (y - 1)) + 1;  //+ (y / 4);
 	tree->set_position(position);
 
 	return tree;
@@ -379,8 +397,8 @@ static Tree* create_tree(int x, int y) {
 static Water* create_water(int x, int y) {
 	Water* water = new Water;
 	Point position = new point;
-	position->x = (rand() % x) + (x / 4);
-	position->y = (rand() % y) + (y / 4);
+	position->x = (rand() % (x-1)) + 1; //(x / 4);
+	position->y = (rand() % (y-1)) + 1; //(y / 4);
 	water->set_position(position);
 
 	return water;
@@ -390,8 +408,8 @@ static Water* create_water(int x, int y) {
 static Potion* create_potion(int x, int y) {
 	Potion* potion = new Potion;
 	Point position = new point;
-	position->x = (rand() % x) + (x / 4);
-	position->y = (rand() % y) + (y / 4);
+	position->x = (rand() % (x - 1)) + 1;		//+ (x / 4);
+	position->y = (rand() % (y - 1)) + 1;  //+ (y / 4);
 	potion->set_position(position);
 
 	return potion;
@@ -538,9 +556,9 @@ static void move_awayV(Vampire* v, Point point) {
 
 
 
-void state_update(State state, KeyState keys, Avatar* avatar) {
+void state_update(State state, Avatar* avatar) {
 	if (state->info.playing) {
-			avatar->movement(state, keys);		//thelei virtual,simadiko isws xreiastei allagi(idea: tou creature
+			//avatar->movement(state, keys);		//thelei virtual,simadiko isws xreiastei allagi(idea: tou creature
 												//h movement na einai virtual kai na exei thn kinhsh toy werewolf
 
 			for (int i = 0; i < state->Ww.size(); i++) {
@@ -579,7 +597,10 @@ void state_update(State state, KeyState keys, Avatar* avatar) {
 					if (abs(p1->x - p3->x) <= 1 && abs(p1->y - p3->y) <= 1) {
 						w->attack(vp);
 						if ((vp->get_health()) == 0) {
-							state->Vp.erase(state->Vp.begin() + j - 1);
+							if (j == 0) {
+								state->Vp.erase(state->Vp.begin() + j );
+							}
+							else state->Vp.erase(state->Vp.begin() + j - 1);
 							//deallocation of pointers , destructors, delete etc
 						}
 						//vp->movement(state, j, false); //isws na mh xreiazetai
@@ -624,7 +645,10 @@ void state_update(State state, KeyState keys, Avatar* avatar) {
 					if (abs(p4->x - p6->x) <= 1 && abs(p4->y - p6->y) <= 1) {
 						v->attack(wolf);
 						if ((wolf->get_health()) == 0) {
-							state->Ww.erase(state->Ww.begin() + b - 1);
+							if (b == 0) {
+								state->Ww.erase(state->Ww.begin() + b);
+							}
+							else state->Ww.erase(state->Ww.begin() + b - 1);
 							//same as Vp
 						}
 						//wolf->movement(state, b, false); //isws na mh xreiazetai
