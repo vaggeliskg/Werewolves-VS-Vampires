@@ -5,21 +5,60 @@ using namespace std;
 
 // Print board of game
 void board(int x, int y, State state) {
-
+	bool printed;
 	for (int i = 0; i < y; i++) {
-		cout << "#";
-		for (int j = 0; j < x - 2 ; j++) {
+		for (int j = 0; j < x ; j++) {
+			printed = false;
+			if (i == 0 || i == y-1) {
+				cout << "@";
+				printed = true;
+			}
+			if (i != 0 && i != y - 1 && (j == x-1 || j == 0)) {
+				cout << "#";
+				printed = true;
+			}
 			for (int k = 0; k < state->Ww.size(); k++) {
-				if (i == state->Ww.at(k)->get_position()->y && j == state->Ww.at(k)->get_position()->x) cout << 'W';
+				if (i == state->Ww.at(k)->get_position()->y && j == state->Ww.at(k)->get_position()->x) {
+					cout << 'w';
+					printed = true;
+					break;
+				}
 			}
 			for (int k = 0; k < state->Vp.size(); k++) {
-				if (i == state->Vp.at(k)->get_position()->y && j == state->Vp.at(k)->get_position()->x) cout << 'V';
+				if (i == state->Vp.at(k)->get_position()->y && j == state->Vp.at(k)->get_position()->x) {
+					cout << 'v';
+					printed = true;
+					break;
+				}
 			}
-			if (i == 0 || i == y - 1) cout << "#";
-			else if (i == state->At.at(0)->get_position()->y && j == state->At.at(0)->get_position()->x) cout << "A";
-			else cout << ' ';
+			if (i == state->At.at(0)->get_position()->y && j == state->At.at(0)->get_position()->x) {
+				cout << "A";
+				printed = true;
+			}
+			for (int k = 0; k < state->Tr.size(); k++) {
+				if (i == state->Tr.at(k)->get_position()->y && j == state->Tr.at(k)->get_position()->x) {
+					cout << "T";
+					printed = true;
+					break;
+				}
+			}
+			for (int k = 0; k < state->Wt.size(); k++) {
+				if (i == state->Wt.at(k)->get_position()->y && j == state->Wt.at(k)->get_position()->x) {
+					cout << "W";
+					printed = true;
+					break;
+				}
+			}
+			if (i == state->Pt.at(0)->get_position()->y && j == state->Pt.at(0)->get_position()->x) {
+				cout << "P";
+				printed = true;
+			}
+			if (printed == false)
+				cout << " ";
+			
 		}
-		cout << "#\n";
+		cout << endl;
+		
 	}
 }
 
@@ -36,8 +75,8 @@ int main() {
 	cout << endl;
 
 	Map* ptr = new Map;
-	ptr->set_length(x);
-	ptr->set_width(y);
+	ptr->set_length(y);
+	ptr->set_width(x);
 	ptr->set_time(false);
 
 	// Create state of the game
@@ -59,10 +98,6 @@ int main() {
 	} while (team != "W" && team != "w" && team != "V" && team != "v");
 	cout << endl;
 
-	system("cls");
-
-	//board(x, y);
-
 	// Printing results for test debugging
 	cout << "Map is: " << ptr->get_length() << "x" << ptr->get_width() << endl;
 	if (state->info.Team_W) {
@@ -75,11 +110,25 @@ int main() {
 
 	system("cls");
 
-	//cout << state->At.at(0)->get_position()->y; "\n";
-	//cout << state->At.at(0)->get_position()->x; "\n";
-
 	while (true) {
 		board(x, y, state);
+		/*for (int k = 0; k < state->Vp.size(); k++) {
+			cout << "v:" << state->Vp.at(k)->get_position()->x << "," << state->Vp.at(k)->get_position()->y << endl;
+		}
+		for (int k = 0; k < state->Ww.size(); k++) {
+			cout << "Ww:" << state->Ww.at(k)->get_position()->x << "," << state->Ww.at(k)->get_position()->y << endl;
+		}
+		for (int k = 0; k < state->Wt.size(); k++) {
+			cout << "W:" << state->Wt.at(k)->get_position()->x << "," << state->Wt.at(k)->get_position()->y << endl;
+		}
+		for (int k = 0; k < state->Tr.size(); k++) {
+			cout << "tr:" << state->Tr.at(k)->get_position()->x << "," << state->Tr.at(k)->get_position()->y << endl;
+		}
+		cout << "A:" << state->At.at(0)->get_position()->x << "," << state->At.at(0)->get_position()->y << endl;
+		cout << "Pt:" << state->Pt.at(0)->get_position()->x << "," << state->Pt.at(0)->get_position()->y << endl;
+		for (int k = 0; k < state->Locations.size(); k++) {
+			cout << "Loc:" << state->Locations.at(k)->x << "," << state->Locations.at(k)->y << endl;
+		}*/
 		state_update(state, state->At.at(0));
 		if (_kbhit) {
 

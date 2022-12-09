@@ -24,7 +24,7 @@ typedef struct key_state {
 typedef struct state_info {
     int number_W = 0;                       // Number of Werewolves that are still alive
     int number_V = 0;                       // Number of Vampires that are still alive
-    bool Team_W;                            // True for team Werewolves, false for team Vampires
+    bool Team_W = false;                    // True for team Werewolves, false for team Vampires. Initialize to false to avoid warnings
     bool playing = false;					// True if game has started (false after game over)
     bool paused = false;					// True if game is paused
 }* StateInfo;
@@ -134,6 +134,7 @@ struct state {
     vector <Tree*> Tr;
     vector <Water*> Wt;
     vector <Potion*> Pt;
+    vector <Point> Locations;
 };
 
 
