@@ -10,15 +10,16 @@ using namespace std;
 typedef struct state* State;
 
 // Information about which keys are pressed
-typedef struct key_state {
+typedef struct surroundings {
     bool up;						        // True if this key is pressed
     bool down;
     bool left;
     bool right;
-    bool space;
-    bool enter;
-    bool p;
-}* KeyState;
+    bool upper_r;
+    bool upper_l;
+    bool lower_r;
+    bool lower_l;
+}*S ;
 
 // General information about the game
 typedef struct state_info {
@@ -56,10 +57,13 @@ public:
 class Creature {
 protected:
     Point position;                         // Position in map
+    S sour;
 public:
-    void movement(State state, int first, bool ct);
+    virtual void movement(State state, int first);
     void set_position(Point position);
     Point get_position()const;
+    void set_sour(S sour);
+    S get_sour()const;
 };
 
 // Objects can be Water, Trees or Potion
@@ -78,7 +82,7 @@ class Avatar :public Creature {
 private:
     int potions = 1;                        // Number of potions [0,2]
 public:
-    void movement(State state, KeyState keys);
+    //void movement(State state, KeyState keys);
     void change(char dir);
     void set_potions(int potions);
     int get_potions()const;
@@ -122,6 +126,7 @@ public:
     int get_strength()const;
     int get_defence()const;
     int get_medkit()const;
+    void movement(State state, int first);
 };
 
 class Tree :public Object {};

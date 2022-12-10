@@ -65,23 +65,23 @@ int main() {
 		}
 		else {													// If game is not paused
 			board(x, y, state);									// Print board, creatures and objects
-			/*for (int k = 0; k < state->Vp.size(); k++) {
-				cout << "v:" << state->Vp.at(k)->get_position()->x << "," << state->Vp.at(k)->get_position()->y << endl;
-			}
-			for (int k = 0; k < state->Ww.size(); k++) {
-				cout << "Ww:" << state->Ww.at(k)->get_position()->x << "," << state->Ww.at(k)->get_position()->y << endl;
-			}
-			for (int k = 0; k < state->Wt.size(); k++) {
-				cout << "W:" << state->Wt.at(k)->get_position()->x << "," << state->Wt.at(k)->get_position()->y << endl;
-			}
-			for (int k = 0; k < state->Tr.size(); k++) {
-				cout << "tr:" << state->Tr.at(k)->get_position()->x << "," << state->Tr.at(k)->get_position()->y << endl;
-			}
-			cout << "A:" << state->At.at(0)->get_position()->x << "," << state->At.at(0)->get_position()->y << endl;
-			cout << "Pt:" << state->Pt.at(0)->get_position()->x << "," << state->Pt.at(0)->get_position()->y << endl;
+				/*for (int k = 0; k < state->Vp.size(); k++) {
+					cout << "v:" << state->Vp.at(k)->get_position()->x << "," << state->Vp.at(k)->get_position()->y << endl;
+				}
+				for (int k = 0; k < state->Ww.size(); k++) {
+					cout << "Ww:" << state->Ww.at(k)->get_position()->x << "," << state->Ww.at(k)->get_position()->y << endl;
+				}
+				for (int k = 0; k < state->Wt.size(); k++) {
+					cout << "W:" << state->Wt.at(k)->get_position()->x << "," << state->Wt.at(k)->get_position()->y << endl;
+				}
+				for (int k = 0; k < state->Tr.size(); k++) {
+					cout << "tr:" << state->Tr.at(k)->get_position()->x << "," << state->Tr.at(k)->get_position()->y << endl;
+				}
+				cout << "A:" << state->At.at(0)->get_position()->x << "," << state->At.at(0)->get_position()->y << endl;
+				cout << "Pt:" << state->Pt.at(0)->get_position()->x << "," << state->Pt.at(0)->get_position()->y << endl;*/
 			for (int k = 0; k < state->Locations.size(); k++) {
 				cout << "Loc:" << state->Locations.at(k)->x << "," << state->Locations.at(k)->y << endl;
-			}*/
+			}
 			state_update(state, state->At.at(0));
 		}
 			if (_kbhit) {										// If any key is pressed

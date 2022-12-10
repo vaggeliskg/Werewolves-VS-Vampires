@@ -40,128 +40,128 @@ void Avatar::change(char b) {
 }
 
 // Avatar
-void Avatar::movement(State state, KeyState keys){
-	Avatar* avatar = state->At.at(0);
-	Point p = avatar->get_position();
-	if (keys->up) {
-		p->y--;													// might need some else if instead of if(to be fixed)
-		avatar->set_position(p);
-	}
-	if (keys->down) {
-		p->y++;
-		avatar->set_position(p);
-	}
-	if (keys->left) {
-		p->x--;
-		avatar->set_position(p);
-	}
-	if (keys->right) {
-		p->x++;
-		avatar->set_position(p);
-	}
+//void Avatar::movement(State state, KeyState keys){
+//	Avatar* avatar = state->At.at(0);
+//	Point p = avatar->get_position();
+//	if (keys->up) {
+//		p->y--;													// might need some else if instead of if(to be fixed)
+//		avatar->set_position(p);
+//	}
+//	if (keys->down) {
+//		p->y++;
+//		avatar->set_position(p);
+//	}
+//	if (keys->left) {
+//		p->x--;
+//		avatar->set_position(p);
+//	}
+//	if (keys->right) {
+//		p->x++;
+//		avatar->set_position(p);
+//	}
+//
+//}
 
+static void check(State state, Creature* c) {
+	Point p = c->get_position();
+	S s = c->get_sour();
+	for (int i = 0; i < state->Locations.size(); i++) {
+		Point pp = state->Locations.at(i);
+		if (p->x == (pp->x - 1) && p->y == pp->y)
+			s->right = true;				// he's on the right
+		
+		else s->right = false;
+		
+		if (p->x == (pp->x + 1) && p->y == pp->y)
+			s->left = true;				//he's on the left
+
+		else s->left = false;
+
+		if (p->x == pp->x && p->y == (pp->y - 1))
+			s->down = true;				//he's below
+
+		else s->down = false;
+
+		if (p->x == pp->x && p->y == (pp->y + 1))
+			s->up = true;				//he's above
+
+		else s->up = false;
+
+		if (p->x == (pp->x - 1) && p->y == (pp->y + 1))
+			s->upper_r = true;			//he's upper right
+
+		else s->upper_r = false;
+
+		if (p->x == (pp->x + 1) && p->y == (pp->y + 1))
+			s->upper_l = true;			//he's upper left
+
+		else s->upper_l = false;
+
+		if (p->x == (pp->x + 1) && p->y == (pp->y - 1))
+			s->lower_l = true;			//he's lower left
+
+		else s->lower_l = false;
+
+		if (p->x == (pp->x - 1) && p->y == (pp->y - 1))
+			s->lower_r = true;			//he's lower right
+
+		else s->lower_r = false;
+
+	}
 }
 
+
+static void move(Creature* cr, State state,int i) {
+
+	cr->movement(state, i);
+}
+
+
+
 // Creature
-void Creature::movement(State state,int i, bool Wf) {
+void Creature::movement(State state,int i) {
 	//decide its movement + check that it does not go out of the map's border
-	if (Wf == true) {
-		Werewolf* w = state->Ww.at(i);
-		Point place = w->get_position();
-		int decide = rand() % 5;
-		switch (decide) {
-		case 0:
-			if (place->x  < state->map->get_width() - 2) {
-				place->x++;
-				w->set_position(place);
-			}
-			break;
-		case 1:
-			if (place->x > 1) {
-				place->x--;
-				w->set_position(place);
-			}	
-			break;
-		case 2:
-			if (place->y < state->map->get_length() - 2) {
-				place->y++;
-				w->set_position(place);
-			}
-			break;
-		case 3:
-			if (place->y > 1) {
-				place->y--;
-				w->set_position(place);
-			}
-			break;
-		case 4:
-			//stand still
-			break;
+	Werewolf* w = state->Ww.at(i);
+	Point place = w->get_position();
+	S s = w->get_sour();
+	int decide = rand() % 5;
+	switch (decide) {
+	case 0:
+		if (place->x  < state->map->get_width() - 2 && s->right == false) {
+			place->x++;
+			w->set_position(place);
 		}
-		
-	}
-	else {
-		Vampire* v = state->Vp.at(i);
-		Point place = v->get_position();
-		int decide = rand() % 9;
-		switch (decide) {
-		case 0:
-			if (place->x < state->map->get_width() - 2) {
-				place->x++;
-				v->set_position(place);
-			}
-			break;
-		case 1:
-			if (place->x > 1) {
-				place->x--;
-				v->set_position(place);
-			}
-			break;
-		case 2:
-			if (place->y < state->map->get_length() - 2) {
-				place->y++;
-				v->set_position(place);
-			}
-			break;
-		case 3:
-			if (place->y > 1) {
-				place->y--;
-				v->set_position(place);
-			}
-			break;
-		case 4:
-			if (place->x < state->map->get_width() - 2 || place->y > 1) {
-				place->x++;
-				place->y--;
-				v->set_position(place);
-			}
-			break;
-		case 5:
-			if (place->x < state->map->get_width() - 2 || place->y < state->map->get_length() - 2) {
-				place->x++;
-				place->y++;
-				v->set_position(place);
-			}
-			break;
-		case 6:
-			if (place->x > 1 || place->y > 1) {
-				place->x--;
-				place->y--;
-				v->set_position(place);
-			}
-			break;
-		case 7:
-			if (place->x > 1 || place->y < state->map->get_length() - 2) {
-				place->x--;
-				place->y++;
-				v->set_position(place);
-			}
-			break;
-		case 8:
-			//do nothing
-			break;
+		break;
+	case 1:
+		if (place->x > 1 && s->left == false) {
+			place->x--;
+			w->set_position(place);
+		}	
+		break;
+	case 2:
+		if (place->y < state->map->get_length() - 2 && s->down == false ) {
+			place->y++;
+			w->set_position(place);
 		}
+		break;
+	case 3:
+		if (place->y > 1 && s->up == false) {
+			place->y--;
+			w->set_position(place);
+		}
+		break;
+	case 4:
+		//stand still
+		break;
 	}
+}
+
+void Creature::set_sour(S surroundings) {
+	sour = surroundings;
+}
+
+S Creature::get_sour()const {
+	return sour;
 }
 
 void Creature::set_position(Point pos) {
@@ -204,50 +204,6 @@ void Avatar::help_V(Vampire* vampire) {							// Help creature vampire by adding
 	}
 }
 
-static void move_both(Werewolf* w, Vampire* v) {
-	Point p1 = w->get_position();
-	Point p2 = v->get_position();
-
-	if (p1->x <= p2->x) {
-		p1->x--;
-		p2->x++;
-	}
-	if (p1->y <= p2->y) {
-		p1->y--;
-		p2->y++;
-	}
-	else if (p1->x >= p2->x) {
-		p1->x++;
-		p2->x--;
-	}
-	else if (p1->y >= p2->y) {
-		p1->y++;
-		p2->y--;
-	}
-}
-
-static void move_both_2(Vampire* v, Werewolf* w) {
-	Point p1 = w->get_position();
-	Point p2 = v->get_position();
-
-	if (p1->x <= p2->x) {
-		p1->x--;
-		p2->x++;
-	}
-	if (p1->y <= p2->y) {
-		p1->y--;
-		p2->y++;
-	}
-	else if (p1->x >= p2->x) {
-		p1->x++;
-		p2->x--;
-	}
-	else if (p1->y >= p2->y) {
-		p1->y++;
-		p2->y--;
-	}
-}
-
 // Werewolf
 void Werewolf::attack(Vampire* vampire) {
 	int attack_value = this->get_strength();					// Strength value
@@ -257,9 +213,6 @@ void Werewolf::attack(Vampire* vampire) {
 			vampire->set_health(vampire->get_health() - damage);
 		}
 	}
-	//else {
-		//move_both(this, vampire);
-	//}
 }
 
 void Werewolf::help(Werewolf* werewolf) {
@@ -309,6 +262,8 @@ int Werewolf::get_medkit()const {
 	return medkit;
 }
 
+
+
 // Vampire
 void Vampire::attack(Werewolf* werewolf) {
 	int attack_value = this->get_strength();					// Strength value
@@ -318,7 +273,6 @@ void Vampire::attack(Werewolf* werewolf) {
 			werewolf->set_health(werewolf->get_health() - damage);
 		}
 	}
-	//move_both_2(this, werewolf);
 }
 
 void Vampire::help(Vampire* vampire) {
@@ -332,6 +286,71 @@ void Vampire::help(Vampire* vampire) {
 		break;
 	case 1:
 		// do nothing
+		break;
+	}
+}
+
+void Vampire::movement(State state, int i) {
+	Vampire* v = state->Vp.at(i);
+	Point place = v->get_position();
+	S s = v->get_sour();
+	int decide = rand() % 9;
+	switch (decide) {
+	case 0:
+		if (place->x < state->map->get_width() - 2 && s->right == false) {
+			place->x++;
+			v->set_position(place);
+		}
+		break;
+	case 1:
+		if (place->x > 1 && s->left == false) {
+			place->x--;
+			v->set_position(place);
+		}
+		break;
+	case 2:
+		if (place->y < state->map->get_length() - 2 && s->down == false) {
+			place->y++;
+			v->set_position(place);
+		}
+		break;
+	case 3:
+		if (place->y > 1 && s->up == false) {
+			place->y--;
+			v->set_position(place);
+		}
+		break;
+
+	case 4:
+		if ((place->x < state->map->get_width() - 2 && place->y > 1) && s->upper_r == false) {
+			place->x++;
+			place->y--;
+			v->set_position(place);
+		}
+		break;
+	case 5:
+		if ((place->x < state->map->get_width() - 2 && place->y < state->map->get_length() - 2) && s->lower_r == false) {
+			place->x++;
+			place->y++;
+			v->set_position(place);
+		}
+		break;
+	case 6:
+		if ((place->x > 1 && place->y > 1) && s->upper_l == false) { 
+			place->x--;
+			place->y--;
+			v->set_position(place);
+		}
+		break;
+	case 7:
+		if ((place->x > 1 && place->y < state->map->get_length() - 2) && s->lower_l == false) {
+			place->x--;
+			place->y++;
+			v->set_position(place);
+		}
+		break;
+	case 8:
+		//do nothing
 		break;
 	}
 }
@@ -372,6 +391,7 @@ int Vampire::get_medkit()const {
 // Creates a werewolf
 static Werewolf* create_w(State state, int x, int y ) {
 	Werewolf* w = new Werewolf;
+	S sour = new surroundings;
 	int health = (rand() % 5) + 1;
 	int strength = (rand() % 3) + 1;
 	int defense = (rand() % 2) + 1;
@@ -395,6 +415,7 @@ static Werewolf* create_w(State state, int x, int y ) {
 		}
 
 	} while (found);														// if a new location is found then stop searching where to place the object
+	w->set_sour(sour);
 	w->set_health(health);
 	w->set_strength(strength);
 	w->set_defence(defense);
@@ -407,6 +428,7 @@ static Werewolf* create_w(State state, int x, int y ) {
 // Creates a vampire
 static Vampire* create_v(State state, int x, int y) {
 	Vampire* v = new Vampire;
+	S sour = new surroundings;
 	int health = (rand() % 5) + 1;
 	int strength = (rand() % 3) + 1;
 	int defense = (rand() % 2) + 1;
@@ -435,6 +457,7 @@ static Vampire* create_v(State state, int x, int y) {
 	v->set_defence(defense);
 	v->set_medkit(medkit);
 	v->set_position(position);
+	v->set_sour(sour);
 											//nomizw edw tha prepei na kanoyme deallocate to position
 	return v;								// + kapoious elegxous gia na min exei themata sto interface
 }
@@ -443,6 +466,7 @@ static Vampire* create_v(State state, int x, int y) {
 static Avatar* create_avatar(State state, int x, int y) {
 	Avatar* avatar = new Avatar;
 	Point position = new point;
+	S sour = new surroundings;
 	bool found = false;
 	do {
 		position->x = (rand() % (x - 2)) + 1;								// find one position
@@ -462,7 +486,7 @@ static Avatar* create_avatar(State state, int x, int y) {
 
 	} while (found);														// if a new location is found then stop searching where to place the object
 	avatar->set_position(position);
-
+	avatar->set_sour(sour);
 	return avatar;
 }
 
@@ -605,137 +629,54 @@ StateInfo state_info(State state) {
 	return &state->info;
 }
 
-
-static void move_bothW(Werewolf* w1 , Werewolf* w2) {
-	Point p1 = w1->get_position();
-	Point p2 = w2->get_position();
-
-	if(p1->x <= p2->x) {
-		p1->x--;
-		p2->x++;
-	}
-	if (p1->y <= p2->y) {
-		p1->y--;
-		p2->y++;
-	}
-	else if (p1->x >= p2->x) {
-		p1->x++;
-		p2->x--;
-	}
-	else if (p1->y >= p2->y) {
-		p1->y++;
-		p2->y--;
-	}
-
-}
-
-static void move_bothV(Vampire* v1, Vampire* v2) {
-	Point p1 = v1->get_position();
-	Point p2 = v2->get_position();
-
-	if (p1->x <= p2->x) {
-		p1->x--;
-		p2->x++;
-	}
-	if (p1->y <= p2->y) {
-		p1->y--;
-		p2->y++;
-	}
-	else if (p1->x >= p2->x) {
-		p1->x++;
-		p2->x--;
-	}
-	else if (p1->y >= p2->y) {
-		p1->y++;
-		p2->y--;
-	}
-}
-
-static void move_away(Werewolf* w, Point point) {
-	Point p1 = w->get_position();
-
-	if (p1->x <= point->x) {
-		p1->x--;
-	}
-	if (p1->y <= point->y) {
-		p1->y--;
-	}
-	else if (p1->x >= point->x) {
-		p1->x++;
-	}
-	else if (p1->y >= point->y) {
-		p1->y++;
-	}
-}
-
-static void move_awayV(Vampire* v, Point point) {
-	Point p1 = v->get_position();
-
-	if (p1->x <= point->x) {
-		p1->x--;
-	}
-	if (p1->y <= point->y) {
-		p1->y--;
-	}
-	else if (p1->x >= point->x) {
-		p1->x++;
-	}
-	else if (p1->y >= point->y) {
-		p1->y++;
-	}
-}
-
-
-
-
 void state_update(State state, Avatar* avatar) {
 	if (state->info.playing) {
-			//avatar->movement(state, keys);		//thelei virtual,simadiko isws xreiastei allagi(idea: tou creature
-												//h movement na einai virtual kai na exei thn kinhsh toy werewolf
-
+				//avatar->movement(state, keys);			//thelei virtual,simadiko isws xreiastei allagi(idea: tou creature
+														//h movement na einai virtual kai na exei thn kinhsh toy werewolf
 			for (int i = 0; i < state->Ww.size(); i++) {
 				Werewolf* w = state->Ww.at(i);
 				Point p1 = w->get_position();
-				w->movement(state, i, true);					//true for w , false for v thelei alli methodo tha to skefto meta
+				check(state, w);
+				move(w, state, i);
 				for (int k = 0; k < state->Ww.size(); k++) {
 					Werewolf* w_2 = state->Ww.at(k);
 					Point p2 = w_2->get_position();
 					if (abs(p1->x - p2->x) <= 1 && abs(p1->y - p2->y) <= 1) {
-						if (w == w_2) { continue; }			//it may be wrong , we'll see
+						if (w == w_2) { continue; }			
 						else {
 							w->help(w_2);
-							w_2->movement(state, k, true);
-							//move_bothW(w, w_2);
+							check(state, w_2);
+							move(w_2, state, k);
 						}
 					}
 				}
-				for (int c = 0; c < state->Tr.size(); c++) {
-					Tree* tree = state->Tr.at(c);
-					Point p = tree->get_position();
-					//if (abs(p1->x - p->x) <= 1 && abs(p1->y - p->y) <= 1) {
-						//move_away(w, p);
-					//}
-				}
-				for (int c = 0; c < state->Wt.size(); c++) {
-					Water* water = state->Wt.at(c);
-					Point pp = water->get_position();
-					//if (abs(p1->x - pp->x) <= 1 && abs(p1->y - pp->y) <= 1) {
-						//move_away(w, pp);
-					//}
-				}
+					/*	for (int c = 0; c < state->Tr.size(); c++) {
+						Tree* tree = state->Tr.at(c);
+						Point p = tree->get_position();
+						if (abs(p1->x - p->x) <= 1 && abs(p1->y - p->y) <= 1) {
+							check(state, w);
+						}
+					}*/
+					/*for (int c = 0; c < state->Wt.size(); c++) {
+						Water* water = state->Wt.at(c);
+						Point pp = water->get_position();
+						if (abs(p1->x - pp->x) <= 1 && abs(p1->y - pp->y) <= 1) {
+							check(state, w);
+								move(w, pp);
+					}
+					}*/
 				for (int j = 0; j < state->Vp.size(); j++) {
 					Vampire* vp = state->Vp.at(j);
 					Point p3 = vp->get_position();
 					if (abs(p1->x - p3->x) <= 1 && abs(p1->y - p3->y) <= 1) {
 						w->attack(vp);
-						if ((vp->get_health()) == 0) {
-							if (j == 0) {
+						check(state, w);
+						move(w, state, i);
+						if ((vp->get_health()) <= 0) {
 								state->Vp.erase(state->Vp.begin() + j );
-							}
-							else state->Vp.erase(state->Vp.begin() + j - 1);
-							//deallocation of pointers , destructors, delete etc
+								state->info.number_V--;
+								//deallocation of pointers , destructors, delete etc
 						}
-						//vp->movement(state, j, false); //isws na mh xreiazetai
 					}
 				}
 			}
@@ -743,55 +684,49 @@ void state_update(State state, Avatar* avatar) {
 			for (int i = 0; i < state->Vp.size(); i++) {
 				Vampire* v = state->Vp.at(i);
 				Point p4 = v->get_position();
-				v->movement(state, i, false); //0 for w , 1 for v thelei alli methodo tha to skefto meta
-
+				check(state, v);
+				move(v,state, i); 
 				for (int a = 0; a < state->Vp.size(); a++) {
 					Vampire* vv = state->Vp.at(a);
 					Point p5 = vv->get_position();
 					if (abs(p4->x - p5->x) <= 1 && abs(p4->y - p5->y) <= 1) {
-						if (v == vv) { continue; }			//it may be wrong , we'll see
+						if (v == vv) { continue; }			
 						else {
 							v->help(vv);
-							//move_bothV(v, vv);
-							//vv->movement(state, a, false);
+							check(state, vv);
+							move(vv, state, a);
 						}
 					}
 				}
-				for (int c = 0; c < state->Tr.size(); c++) {
-					Tree* tree = state->Tr.at(c);
-					Point p = tree->get_position();
-					//if (abs(p4->x - p->x) <= 1 && abs(p4->y - p->y) <= 1) {
-						//move_awayV(v, p);
+					//for (int c = 0; c < state->Tr.size(); c++) {
+					//	Tree* tree = state->Tr.at(c);
+					//	Point p = tree->get_position();
+					//	//if (abs(p4->x - p->x) <= 1 && abs(p4->y - p->y) <= 1) {
+					//		//move_awayV(v, p);
+					//	//}
 					//}
-				}
-				for (int c = 0; c < state->Wt.size(); c++) {
-					Water* water = state->Wt.at(c);
-					Point pp = water->get_position();
-					//if (abs(p4->x - pp->x) <= 1 && abs(p4->y - pp->y) <= 1) {
-					//	move_awayV(v, pp);
+					//for (int c = 0; c < state->Wt.size(); c++) {
+					//	Water* water = state->Wt.at(c);
+					//	Point pp = water->get_position();
+					//	//if (abs(p4->x - pp->x) <= 1 && abs(p4->y - pp->y) <= 1) {
+					//	//	move_awayV(v, pp);
+					//	//}
 					//}
-				}
 				for (int b = 0; b < state->Ww.size(); b++) {
 					Werewolf* wolf= state->Ww.at(b);
 					Point p6 = wolf->get_position();
 					if (abs(p4->x - p6->x) <= 1 && abs(p4->y - p6->y) <= 1) {
 						v->attack(wolf);
-						if ((wolf->get_health()) == 0) {
-							if (b == 0) {
+						check(state, v);
+						move(v, state, i);
+						if ((wolf->get_health()) <= 0) {
 								state->Ww.erase(state->Ww.begin() + b);
-							}
-							else state->Ww.erase(state->Ww.begin() + b - 1);
-							//same as Vp
+								state->info.number_W--;
 						}
-						//wolf->movement(state, b, false); //isws na mh xreiazetai
 					}
 				}
 			}
-
-			 
-
-
-
+		
 	}
 }
 
