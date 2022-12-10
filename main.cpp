@@ -3,77 +3,24 @@
 
 using namespace std;
 
-// Print board of game
-void board(int x, int y, State state) {
-	bool printed;
-	for (int i = 0; i < y; i++) {
-		for (int j = 0; j < x ; j++) {
-			printed = false;
-			if (i == 0 || i == y-1) {
-				cout << "@";
-				printed = true;
-			}
-			if (i != 0 && i != y - 1 && (j == x-1 || j == 0)) {
-				cout << "#";
-				printed = true;
-			}
-			for (int k = 0; k < state->Ww.size(); k++) {
-				if (i == state->Ww.at(k)->get_position()->y && j == state->Ww.at(k)->get_position()->x) {
-					cout << 'w';
-					printed = true;
-					break;
-				}
-			}
-			for (int k = 0; k < state->Vp.size(); k++) {
-				if (i == state->Vp.at(k)->get_position()->y && j == state->Vp.at(k)->get_position()->x) {
-					cout << 'v';
-					printed = true;
-					break;
-				}
-			}
-			if (i == state->At.at(0)->get_position()->y && j == state->At.at(0)->get_position()->x) {
-				cout << "A";
-				printed = true;
-			}
-			for (int k = 0; k < state->Tr.size(); k++) {
-				if (i == state->Tr.at(k)->get_position()->y && j == state->Tr.at(k)->get_position()->x) {
-					cout << "T";
-					printed = true;
-					break;
-				}
-			}
-			for (int k = 0; k < state->Wt.size(); k++) {
-				if (i == state->Wt.at(k)->get_position()->y && j == state->Wt.at(k)->get_position()->x) {
-					cout << "W";
-					printed = true;
-					break;
-				}
-			}
-			if (i == state->Pt.at(0)->get_position()->y && j == state->Pt.at(0)->get_position()->x) {
-				cout << "P";
-				printed = true;
-			}
-			if (printed == false)
-				cout << " ";
-			
-		}
-		cout << endl;
-		
-	}
-}
-
 int main() {
-	int x, y;					// x = width of map, y = length of map
+	int x, y;					// x = width of map, y = length/height of map
 	string team;
 
 	// Select dimensions of map
-	cout << "Welcome to Werewolves vs Vampires" << endl;
+	cout << "Welcome to Werewolves vs Vampires!" << endl;
+	cout << "Suggested width [20,140] and length [15,35]" << endl;
 	cout << "Please type the width of the map: ";
-	cin >> x;
-	cout << "Please type the length of the map: ";
-	cin >> y;
+	do{
+		cin >> x;
+	} while (x < 20 || x > 140);
+	cout << "Please type the height of the map: ";
+	do {
+		cin >> y;
+	} while (y < 15 || y > 35);
 	cout << endl;
 
+	// Create map of the game
 	Map* ptr = new Map;
 	ptr->set_length(y);
 	ptr->set_width(x);
@@ -110,43 +57,58 @@ int main() {
 
 	system("cls");
 
-	while (true) {
-		board(x, y, state);
-		/*for (int k = 0; k < state->Vp.size(); k++) {
-			cout << "v:" << state->Vp.at(k)->get_position()->x << "," << state->Vp.at(k)->get_position()->y << endl;
+	// Game proceeds
+	while (state->info.playing) {								// If game has started
+		if (state->info.paused) {								// If game is paused
+			system("cls");										// Clear screen
+			menu(state);										// Print main menu
 		}
-		for (int k = 0; k < state->Ww.size(); k++) {
-			cout << "Ww:" << state->Ww.at(k)->get_position()->x << "," << state->Ww.at(k)->get_position()->y << endl;
+		else {													// If game is not paused
+			board(x, y, state);									// Print board, creatures and objects
+			/*for (int k = 0; k < state->Vp.size(); k++) {
+				cout << "v:" << state->Vp.at(k)->get_position()->x << "," << state->Vp.at(k)->get_position()->y << endl;
+			}
+			for (int k = 0; k < state->Ww.size(); k++) {
+				cout << "Ww:" << state->Ww.at(k)->get_position()->x << "," << state->Ww.at(k)->get_position()->y << endl;
+			}
+			for (int k = 0; k < state->Wt.size(); k++) {
+				cout << "W:" << state->Wt.at(k)->get_position()->x << "," << state->Wt.at(k)->get_position()->y << endl;
+			}
+			for (int k = 0; k < state->Tr.size(); k++) {
+				cout << "tr:" << state->Tr.at(k)->get_position()->x << "," << state->Tr.at(k)->get_position()->y << endl;
+			}
+			cout << "A:" << state->At.at(0)->get_position()->x << "," << state->At.at(0)->get_position()->y << endl;
+			cout << "Pt:" << state->Pt.at(0)->get_position()->x << "," << state->Pt.at(0)->get_position()->y << endl;
+			for (int k = 0; k < state->Locations.size(); k++) {
+				cout << "Loc:" << state->Locations.at(k)->x << "," << state->Locations.at(k)->y << endl;
+			}*/
+			state_update(state, state->At.at(0));
 		}
-		for (int k = 0; k < state->Wt.size(); k++) {
-			cout << "W:" << state->Wt.at(k)->get_position()->x << "," << state->Wt.at(k)->get_position()->y << endl;
-		}
-		for (int k = 0; k < state->Tr.size(); k++) {
-			cout << "tr:" << state->Tr.at(k)->get_position()->x << "," << state->Tr.at(k)->get_position()->y << endl;
-		}
-		cout << "A:" << state->At.at(0)->get_position()->x << "," << state->At.at(0)->get_position()->y << endl;
-		cout << "Pt:" << state->Pt.at(0)->get_position()->x << "," << state->Pt.at(0)->get_position()->y << endl;
-		for (int k = 0; k < state->Locations.size(); k++) {
-			cout << "Loc:" << state->Locations.at(k)->x << "," << state->Locations.at(k)->y << endl;
-		}*/
-		state_update(state, state->At.at(0));
-		if (_kbhit) {
+			if (_kbhit) {										// If any key is pressed
+				switch (_getch()) {								// Get key pressed
+				case 'w': state->At.at(0)->change('w'); break;
+				case 'd': state->At.at(0)->change('d'); break;
+				case 's': state->At.at(0)->change('s'); break;
+				case 'a': state->At.at(0)->change('a'); break;
+				case 'q':										// If q is pressed then
+					state->info.playing = false;				// Game ends
+					system("cls");								// Clear screen
+					break;
+				case 'p':										// If p is pressed, change the pause condition
+					if (state->info.paused == false) {
+						state->info.paused = true;
+					}
+					else {										// If p pressed and already in menu
+						state->info.paused = false;
+						system("cls");							// Clear screen
+					}
+					break;
+				}
 
-			switch (_getch()) {
-			case 'w': state->At.at(0)->change('w'); break;
-			case 'd': state->At.at(0)->change('d'); break;
-			case 's': state->At.at(0)->change('s'); break;
-			case 'a': state->At.at(0)->change('a'); break;
 			}
 
-			//cout << state->Vp.size(); "\n";
-			//cout << state->Ww.size(); "\n";
-
-		}
-
-		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { 0, 0 });
-
+			SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { 0, 0 }); // Cursor goes at (0,0)
 	}
 
-
+	return 0;
 }

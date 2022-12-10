@@ -266,9 +266,9 @@ void Werewolf::help(Werewolf* werewolf) {
 	int random = rand() % 2;									// Select randomly if a creature is going to help its ally
 	switch (random) {
 	case 0:
-		if (this->get_health() > 1 && werewolf->get_health() < 2) {	// If health is >=2 and health of ally is not max=2
+		if (this->get_medkit() > 0 && werewolf->get_health() < 5) {	// If number of medkit is >0 and health of ally is not max=5
 			werewolf->set_health(werewolf->get_health() + 1);	// Health of another creature +1
-			this->set_health(this->get_health() - 1);			// Health of this creature -1
+			this->set_medkit(this->get_medkit() - 1);			// Medkit of this creature -1
 		}
 		break;
 	case 1:
@@ -289,6 +289,10 @@ void Werewolf::set_defence(int dfnc) {
 	defence = dfnc;
 }
 
+void Werewolf::set_medkit(int mdkt) {
+	medkit = mdkt;
+}
+
 int Werewolf::get_health()const {
 	return health;
 }
@@ -299,6 +303,10 @@ int Werewolf::get_strength()const {
 
 int Werewolf::get_defence()const {
 	return defence;
+}
+
+int Werewolf::get_medkit()const {
+	return medkit;
 }
 
 // Vampire
@@ -317,9 +325,9 @@ void Vampire::help(Vampire* vampire) {
 	int random = rand() % 2;									// Select randomly if a creature is going to help its ally
 	switch (random) {
 	case 0:
-		if (this->get_health() > 1 && vampire->get_health() < 2) {	// If health is >=2 and health of ally is not max=2
+		if (this->get_medkit() > 0 && vampire->get_health() < 5) {	// If number of medkit is >0 and health of ally is not max=5
 			vampire->set_health(vampire->get_health() + 1);		// Health of another creature +1
-			this->set_health(this->get_health() - 1);			// Health of this creature -1
+			this->set_medkit(this->get_medkit() - 1);			// Medkit of this creature -1
 		}
 		break;
 	case 1:
@@ -340,6 +348,10 @@ void Vampire::set_defence(int dfnc) {
 	defence = dfnc;
 }
 
+void Vampire::set_medkit(int mdkt) {
+	medkit = mdkt;
+}
+
 int Vampire::get_health()const {
 	return health;
 }
@@ -352,13 +364,18 @@ int Vampire::get_defence()const {
 	return defence;
 }
 
+int Vampire::get_medkit()const {
+	return medkit;
+}
+
 // Extra functions that create objects. They are used below in function: add()
 // Creates a werewolf
 static Werewolf* create_w(State state, int x, int y ) {
 	Werewolf* w = new Werewolf;
-	int health = (rand() % 2) + 1;
+	int health = (rand() % 5) + 1;
 	int strength = (rand() % 3) + 1;
 	int defense = (rand() % 2) + 1;
+	int medkit = (rand() % 3);
 	Point position = new point;
 	bool found = false;
 	do {
@@ -381,6 +398,7 @@ static Werewolf* create_w(State state, int x, int y ) {
 	w->set_health(health);
 	w->set_strength(strength);
 	w->set_defence(defense);
+	w->set_medkit(medkit);
 	w->set_position(position);
 
 	return w;
@@ -389,9 +407,10 @@ static Werewolf* create_w(State state, int x, int y ) {
 // Creates a vampire
 static Vampire* create_v(State state, int x, int y) {
 	Vampire* v = new Vampire;
-	int health = (rand() % 2) + 1;
+	int health = (rand() % 5) + 1;
 	int strength = (rand() % 3) + 1;
 	int defense = (rand() % 2) + 1;
+	int medkit = (rand() % 3);
 	Point position = new point;
 	bool found = false;
 	do {
@@ -414,6 +433,7 @@ static Vampire* create_v(State state, int x, int y) {
 	v->set_health(health);
 	v->set_strength(strength);
 	v->set_defence(defense);
+	v->set_medkit(medkit);
 	v->set_position(position);
 											//nomizw edw tha prepei na kanoyme deallocate to position
 	return v;								// + kapoious elegxous gia na min exei themata sto interface
@@ -773,5 +793,75 @@ void state_update(State state, Avatar* avatar) {
 
 
 	}
+}
+
+// Functions that are used in main() in order to print the game and it's main menu
+// Print board of game, creatures, objects
+void board(int x, int y, State state) {
+	bool printed;
+	for (int i = 0; i < y; i++) {
+		for (int j = 0; j < x; j++) {
+			printed = false;
+			if (i == 0 || i == y - 1) {
+				cout << "@";
+				printed = true;
+			}
+			if (i != 0 && i != y - 1 && (j == x - 1 || j == 0)) {
+				cout << "#";
+				printed = true;
+			}
+			for (int k = 0; k < state->Ww.size(); k++) {
+				if (i == state->Ww.at(k)->get_position()->y && j == state->Ww.at(k)->get_position()->x) {
+					cout << 'w';
+					printed = true;
+					break;
+				}
+			}
+			for (int k = 0; k < state->Vp.size(); k++) {
+				if (i == state->Vp.at(k)->get_position()->y && j == state->Vp.at(k)->get_position()->x) {
+					cout << 'v';
+					printed = true;
+					break;
+				}
+			}
+			if (i == state->At.at(0)->get_position()->y && j == state->At.at(0)->get_position()->x) {
+				cout << "A";
+				printed = true;
+			}
+			for (int k = 0; k < state->Tr.size(); k++) {
+				if (i == state->Tr.at(k)->get_position()->y && j == state->Tr.at(k)->get_position()->x) {
+					cout << "T";
+					printed = true;
+					break;
+				}
+			}
+			for (int k = 0; k < state->Wt.size(); k++) {
+				if (i == state->Wt.at(k)->get_position()->y && j == state->Wt.at(k)->get_position()->x) {
+					cout << "W";
+					printed = true;
+					break;
+				}
+			}
+			if (i == state->Pt.at(0)->get_position()->y && j == state->Pt.at(0)->get_position()->x) {
+				cout << "P";
+				printed = true;
+			}
+			if (printed == false)
+				cout << " ";
+
+		}
+		cout << endl;
+
+	}
+}
+
+// Prints menu of game and shows game information
+void menu(State state) {
+	int werewolves_left = state->info.number_W;
+	int vampires_left = state->info.number_V;
+	int potions_left = state->At.at(0)->get_potions();
+	cout << "~MAIN MENU~" << endl << "Werewolves left: " << werewolves_left << endl << "Vampires left: " << vampires_left << endl;
+	cout << "Potions left: " << potions_left << endl;
+	cout << "*press 'p' to continue or press 'q' to exit game*" << endl;
 }
 

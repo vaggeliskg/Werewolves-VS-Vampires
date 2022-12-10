@@ -25,7 +25,7 @@ typedef struct state_info {
     int number_W = 0;                       // Number of Werewolves that are still alive
     int number_V = 0;                       // Number of Vampires that are still alive
     bool Team_W = false;                    // True for team Werewolves, false for team Vampires. Initialize to false to avoid warnings
-    bool playing = false;					// True if game has started (false after game over)
+    bool playing = true;					// True if game has started (false after game over)
     bool paused = false;					// True if game is paused
 }* StateInfo;
 
@@ -88,34 +88,40 @@ public:
 
 class Werewolf :public Creature {
 private:
-    int health;                             // Health value can be [0,2]
-    int strength;                           // Strength value can be [,]
-    int defence;                            // defence value can be [,]
+    int health;                             // Health value can be [1,5]
+    int strength;                           // Strength value can be [1,3]
+    int defence;                            // Defence value can be [1,2]
+    int medkit;                             // Medkit value can be [0,2]
 public:
     void attack(Vampire*);                  // Attacks opponent that is near
     void help(Werewolf*);                   // Helps ally that is near
     void set_health(int health);
     void set_strength(int strength);
     void set_defence(int defence);
+    void set_medkit(int medkit);
     int get_health()const;
     int get_strength()const;
     int get_defence()const;
+    int get_medkit()const;
 };
 
 class Vampire :public Creature {
 private:
-    int health;                             // Health value can be[0, 2]
+    int health;                             // Health value can be[1, 5]
     int strength;                           // Strength value can be [1,3]
     int defence;                            // defence value can be [1,2]
+    int medkit;                             // Medkit value can be [0,2]
 public:
     void attack(Werewolf*);                 // Attacks opponent that is near
     void help(Vampire*);                    // Helps ally that is near
     void set_health(int health);
     void set_strength(int strength);
     void set_defence(int defence);
+    void set_medkit(int medkit);
     int get_health()const;
     int get_strength()const;
     int get_defence()const;
+    int get_medkit()const;
 };
 
 class Tree :public Object {};
@@ -127,7 +133,7 @@ class Potion :public Object {};
 // Condition of game (handle)
 struct state {
     struct state_info info;
-    Map* map;
+    Map* map = NULL;
     vector <Werewolf*> Ww;
     vector <Vampire*> Vp;
     vector <Avatar*> At;
@@ -147,4 +153,10 @@ StateInfo state_info(State state);
 
 // Updates the state of the game depending the keys that are pressed
 void state_update(State state, Avatar* avatar);
+
+// Prints board of game, creatures, objects
+void board(int x, int y, State state);
+
+// Prints menu of game and shows game information
+void menu(State state);
 
