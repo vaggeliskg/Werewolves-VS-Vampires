@@ -59,11 +59,7 @@ int main() {
 
 	// Game proceeds
 	while (state->info.playing) {								// If game has started
-		if (state->info.paused) {								// If game is paused
-			system("cls");										// Clear screen
-			menu(state);										// Print main menu
-		}
-		else {													// If game is not paused
+		if (state->info.paused == false) {													// If game is not paused
 			board(x, y, state);									// Print board, creatures and objects
 				/*for (int k = 0; k < state->Vp.size(); k++) {
 					cout << "v:" << state->Vp.at(k)->get_position()->x << "," << state->Vp.at(k)->get_position()->y << endl;
@@ -76,38 +72,52 @@ int main() {
 				}
 				for (int k = 0; k < state->Tr.size(); k++) {
 					cout << "tr:" << state->Tr.at(k)->get_position()->x << "," << state->Tr.at(k)->get_position()->y << endl;
-				}
-				cout << "A:" << state->At.at(0)->get_position()->x << "," << state->At.at(0)->get_position()->y << endl;
-				cout << "Pt:" << state->Pt.at(0)->get_position()->x << "," << state->Pt.at(0)->get_position()->y << endl;*/
-			for (int k = 0; k < state->Locations.size(); k++) {
-				cout << "Loc:" << state->Locations.at(k)->x << "," << state->Locations.at(k)->y << endl;
-			}
-			state_update(state, state->At.at(0));
+				}*/
+				/*cout << "A:" << state->At.at(0)->get_position()->x << "," << state->At.at(0)->get_position()->y << endl;
+				if(state->Pt.size()>0)
+				cout << "Pt:" << state->Pt.at(0)->get_position()->x << "," << state->Pt.at(0)->get_position()->y << endl;
+				for (int k = 0; k < state->Locations.size(); k++) {
+					cout << "Loc:" << state->Locations.at(k)->x << "," << state->Locations.at(k)->y << endl;
+				}*/
+			Sleep(500);										// after delay of 500 milliseconds
+			state_update(state);
 		}
-			if (_kbhit) {										// If any key is pressed
-				switch (_getch()) {								// Get key pressed
-				case 'w': state->At.at(0)->change('w'); break;
-				case 'd': state->At.at(0)->change('d'); break;
-				case 's': state->At.at(0)->change('s'); break;
-				case 'a': state->At.at(0)->change('a'); break;
-				case 'q':										// If q is pressed then
-					state->info.playing = false;				// Game ends
-					system("cls");								// Clear screen
-					break;
-				case 'p':										// If p is pressed, change the pause condition
-					if (state->info.paused == false) {
-						state->info.paused = true;
-					}
-					else {										// If p pressed and already in menu
-						state->info.paused = false;
-						system("cls");							// Clear screen
-					}
-					break;
+		if (!_kbhit() && state->info.paused == false) {
+			system("cls");
+			continue;
+		}
+		else if (_kbhit()) {										// If any key is pressed
+			switch (_getch()) {								// Get key pressed
+			case 'w': state->At.at(0)->movement(state, 'w'); break;
+			case 'd': state->At.at(0)->movement(state, 'd'); break;
+			case 's': state->At.at(0)->movement(state, 's'); break;
+			case 'a': state->At.at(0)->movement(state, 'a'); break;
+			case 'q':										// If q is pressed then
+				state->info.playing = false;				// Game ends
+				system("cls");								// Clear screen
+				break;
+			case 'p':										// If p is pressed, change the pause condition
+				if (state->info.paused == false) {
+					state->info.paused = true;
+					system("cls");
+					menu(state);
 				}
-
+				else {										// If p pressed and already in menu
+					state->info.paused = false;
+					system("cls");							// Clear screen
+				}
+				break;
 			}
 
-			SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { 0, 0 }); // Cursor goes at (0,0)
+		}
+
+		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { 0, 0 }); // Cursor goes at (0,0)
+	}
+	if (state->info.number_W == 0) {
+		cout << "VAMPIRES WON!" << endl;
+	}
+	else {
+		cout << "WEREWOLVES WON!" << endl;
 	}
 
 	return 0;

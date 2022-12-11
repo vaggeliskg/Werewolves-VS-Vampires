@@ -29,90 +29,58 @@ bool Map::get_time()const {
 	return night;
 }
 
-void Avatar::change(char b) {
-	Point p = this->get_position();
-	switch (b) {
-	case 'w': p->y--;  this->set_position(p); break;
-	case 's': p->y++;  this->set_position(p);  break;
-	case 'd': p->x++;  this->set_position(p); break;
-	case 'a': p->x--;  this->set_position(p); break;
-	}
-}
-
-// Avatar
-//void Avatar::movement(State state, KeyState keys){
-//	Avatar* avatar = state->At.at(0);
-//	Point p = avatar->get_position();
-//	if (keys->up) {
-//		p->y--;													// might need some else if instead of if(to be fixed)
-//		avatar->set_position(p);
-//	}
-//	if (keys->down) {
-//		p->y++;
-//		avatar->set_position(p);
-//	}
-//	if (keys->left) {
-//		p->x--;
-//		avatar->set_position(p);
-//	}
-//	if (keys->right) {
-//		p->x++;
-//		avatar->set_position(p);
-//	}
-//
-//}
-
+// Checks if there is any object or creature and updates struct with souroundings properly
 static void check(State state, Creature* c) {
 	Point p = c->get_position();
 	S s = c->get_sour();
 	for (int i = 0; i < state->Locations.size(); i++) {
 		Point pp = state->Locations.at(i);
 		if (p->x == (pp->x - 1) && p->y == pp->y)
-			s->right = true;				// he's on the right
-		
-		else s->right = false;
-		
+			s->right = true;			// he's on the right
+
 		if (p->x == (pp->x + 1) && p->y == pp->y)
 			s->left = true;				//he's on the left
-
-		else s->left = false;
 
 		if (p->x == pp->x && p->y == (pp->y - 1))
 			s->down = true;				//he's below
 
-		else s->down = false;
-
 		if (p->x == pp->x && p->y == (pp->y + 1))
 			s->up = true;				//he's above
-
-		else s->up = false;
 
 		if (p->x == (pp->x - 1) && p->y == (pp->y + 1))
 			s->upper_r = true;			//he's upper right
 
-		else s->upper_r = false;
-
 		if (p->x == (pp->x + 1) && p->y == (pp->y + 1))
 			s->upper_l = true;			//he's upper left
-
-		else s->upper_l = false;
 
 		if (p->x == (pp->x + 1) && p->y == (pp->y - 1))
 			s->lower_l = true;			//he's lower left
 
-		else s->lower_l = false;
-
 		if (p->x == (pp->x - 1) && p->y == (pp->y - 1))
 			s->lower_r = true;			//he's lower right
 
-		else s->lower_r = false;
-
 	}
+	c->set_sour(s);
 }
 
+// Returns struct with sourounding to original form
+static void reload(State state, Creature* cr) {
+	S s = cr->get_sour();
+	s->right = false;
+	s->left = false;
+	s->up = false;
+	s->down = false;
+	s->upper_r = false;
+	s->upper_l = false;
+	s->lower_l = false;
+	s->lower_r = false;
+	cr->set_sour(s);
+}
 
+// Moves creature
 static void move(Creature* cr, State state,int i) {
-
+	reload(state, cr);
+	check(state, cr);
 	cr->movement(state, i);
 }
 
@@ -182,6 +150,71 @@ Point Object::get_position()const {
 }
 
 // Avatar
+void Avatar::movement(State state, char b) {
+	reload(state, this);
+	check(state, this);
+	S s = this->get_sour();
+	Point p = this->get_position();
+	if (state->Pt.size() > 0) {
+		Point potion_p = state->Pt.at(0)->get_position();
+		switch (b) {
+		case 'w':
+			if (p->y > 1 && (s->up == false || p->y == potion_p->y + 1)) {
+				p->y--;							// up
+				this->set_position(p);
+				break;
+			}
+		case 's':
+			if (p->y < state->map->get_length() - 2 && (s->down == false || p->y == potion_p->y - 1)) {
+				p->y++;							// down
+				this->set_position(p);
+				break;
+			}
+		case 'd':
+			if (p->x < state->map->get_width() - 2 && (s->right == false || p->x == potion_p->x - 1)) {
+				p->x++;							// right
+				this->set_position(p);
+				break;
+			}
+		case 'a':
+			if (p->x > 1 && (s->left == false || p->x == potion_p->x + 1)) {
+				p->x--;							// left
+				this->set_position(p);
+				break;
+			}
+		}
+	}
+	else {
+		switch (b) {
+		case 'w':
+			if (p->y > 1 && s->up == false) {
+				p->y--;							// up
+				this->set_position(p);
+				break;
+			}
+		case 's':
+			if (p->y < state->map->get_length() - 2 && s->down == false) {
+				p->y++;							// down
+				this->set_position(p);
+				break;
+			}
+		case 'd':
+			if (p->x < state->map->get_width() - 2 && s->right == false) {
+				p->x++;							// right
+				this->set_position(p);
+				break;
+			}
+		case 'a':
+			if (p->x > 1 && s->left == false ) {
+				p->x--;							// left
+				this->set_position(p);
+				break;
+			}
+		}
+	}
+	this->set_sour(s);
+}
+
 void Avatar::set_potions(int ptns) {
 	potions = ptns;
 }
@@ -629,103 +662,111 @@ StateInfo state_info(State state) {
 	return &state->info;
 }
 
-void state_update(State state, Avatar* avatar) {
+void state_update(State state) {
 	if (state->info.playing) {
-				//avatar->movement(state, keys);			//thelei virtual,simadiko isws xreiastei allagi(idea: tou creature
-														//h movement na einai virtual kai na exei thn kinhsh toy werewolf
-			for (int i = 0; i < state->Ww.size(); i++) {
-				Werewolf* w = state->Ww.at(i);
-				Point p1 = w->get_position();
-				check(state, w);
-				move(w, state, i);
-				for (int k = 0; k < state->Ww.size(); k++) {
-					Werewolf* w_2 = state->Ww.at(k);
-					Point p2 = w_2->get_position();
-					if (abs(p1->x - p2->x) <= 1 && abs(p1->y - p2->y) <= 1) {
-						if (w == w_2) { continue; }			
-						else {
-							w->help(w_2);
-							check(state, w_2);
-							move(w_2, state, k);
-						}
+		Avatar* avatar = state->At.at(0);
+		Point avatar_pos = avatar->get_position();
+		if (state->Pt.size() > 0) {
+			Potion* potion = state->Pt.at(0);
+			Point potion_pos = potion->get_position();
+			if (avatar_pos->x == potion_pos->x && avatar_pos->y == potion_pos->y) {
+				avatar->set_potions(avatar->get_potions() + 1);
+				for (int l = 0; l < state->Locations.size(); l++) {
+					if (potion_pos == state->Locations.at(l)) {
+						state->Locations.erase(state->Locations.begin() + l);
+						break;
 					}
 				}
-					/*	for (int c = 0; c < state->Tr.size(); c++) {
-						Tree* tree = state->Tr.at(c);
-						Point p = tree->get_position();
-						if (abs(p1->x - p->x) <= 1 && abs(p1->y - p->y) <= 1) {
-							check(state, w);
-						}
-					}*/
-					/*for (int c = 0; c < state->Wt.size(); c++) {
-						Water* water = state->Wt.at(c);
-						Point pp = water->get_position();
-						if (abs(p1->x - pp->x) <= 1 && abs(p1->y - pp->y) <= 1) {
-							check(state, w);
-								move(w, pp);
-					}
-					}*/
-				for (int j = 0; j < state->Vp.size(); j++) {
-					Vampire* vp = state->Vp.at(j);
-					Point p3 = vp->get_position();
-					if (abs(p1->x - p3->x) <= 1 && abs(p1->y - p3->y) <= 1) {
-						w->attack(vp);
-						check(state, w);
-						move(w, state, i);
-						if ((vp->get_health()) <= 0) {
-								state->Vp.erase(state->Vp.begin() + j );
-								state->info.number_V--;
-								//deallocation of pointers , destructors, delete etc
-						}
-					}
-				}
+				state->Pt.erase(state->Pt.begin());
 			}
+		}
 
-			for (int i = 0; i < state->Vp.size(); i++) {
-				Vampire* v = state->Vp.at(i);
-				Point p4 = v->get_position();
-				check(state, v);
-				move(v,state, i); 
-				for (int a = 0; a < state->Vp.size(); a++) {
-					Vampire* vv = state->Vp.at(a);
-					Point p5 = vv->get_position();
-					if (abs(p4->x - p5->x) <= 1 && abs(p4->y - p5->y) <= 1) {
-						if (v == vv) { continue; }			
-						else {
-							v->help(vv);
-							check(state, vv);
-							move(vv, state, a);
-						}
+		for (int i = 0; i < state->Ww.size(); i++) {
+			Werewolf* w = state->Ww.at(i);
+			Point p1 = w->get_position();
+			for (int k = 0; k < state->Ww.size(); k++) {
+				Werewolf* w_2 = state->Ww.at(k);
+				Point p2 = w_2->get_position();
+				if (abs(p1->x - p2->x) <= 1 && abs(p1->y - p2->y) <= 1) {
+					if (w == w_2) { continue; }			
+					else {
+						w->help(w_2);
+						move(w_2, state, k);
 					}
 				}
-					//for (int c = 0; c < state->Tr.size(); c++) {
-					//	Tree* tree = state->Tr.at(c);
-					//	Point p = tree->get_position();
-					//	//if (abs(p4->x - p->x) <= 1 && abs(p4->y - p->y) <= 1) {
-					//		//move_awayV(v, p);
-					//	//}
-					//}
-					//for (int c = 0; c < state->Wt.size(); c++) {
-					//	Water* water = state->Wt.at(c);
-					//	Point pp = water->get_position();
-					//	//if (abs(p4->x - pp->x) <= 1 && abs(p4->y - pp->y) <= 1) {
-					//	//	move_awayV(v, pp);
-					//	//}
-					//}
-				for (int b = 0; b < state->Ww.size(); b++) {
-					Werewolf* wolf= state->Ww.at(b);
-					Point p6 = wolf->get_position();
-					if (abs(p4->x - p6->x) <= 1 && abs(p4->y - p6->y) <= 1) {
-						v->attack(wolf);
-						check(state, v);
-						move(v, state, i);
-						if ((wolf->get_health()) <= 0) {
-								state->Ww.erase(state->Ww.begin() + b);
-								state->info.number_W--;
-						}
-					}
+				else {
+					move(w, state, i);
 				}
 			}
+			for (int j = 0; j < state->Vp.size(); j++) {
+				Vampire* vp = state->Vp.at(j);
+				Point p3 = vp->get_position();
+				if (abs(p1->x - p3->x) <= 1 && abs(p1->y - p3->y) <= 1) {
+					w->attack(vp);
+					move(vp, state, j);
+					if ((vp->get_health()) <= 0) {
+						for (int l = 0; l < state->Locations.size(); l++) {
+							if (p3 == state->Locations.at(l)) {
+								state->Locations.erase(state->Locations.begin() + l);
+								break;
+							}
+						}
+						state->Vp.erase(state->Vp.begin() + j );
+						state->info.number_V--;
+						if (state->info.number_V == 0) {
+							state->info.playing = false;
+						}
+						//deallocation of pointers , destructors, delete etc
+					}
+				}
+				else {
+					move(w, state, i);
+				}
+			}
+		}
+
+		for (int i = 0; i < state->Vp.size(); i++) {
+			Vampire* v = state->Vp.at(i);
+			Point p4 = v->get_position();
+			for (int a = 0; a < state->Vp.size(); a++) {
+				Vampire* vv = state->Vp.at(a);
+				Point p5 = vv->get_position();
+				if (abs(p4->x - p5->x) <= 1 && abs(p4->y - p5->y) <= 1) {
+					if (v == vv) { continue; }			
+					else {
+						v->help(vv);
+						move(vv, state, i);
+					}
+				}
+				else {
+					move(v, state, i);
+				}
+			}
+			for (int b = 0; b < state->Ww.size(); b++) {
+				Werewolf* wolf= state->Ww.at(b);
+				Point p6 = wolf->get_position();
+				if (abs(p4->x - p6->x) <= 1 && abs(p4->y - p6->y) <= 1) {
+					v->attack(wolf);
+					move(wolf, state, b);
+					if ((wolf->get_health()) <= 0) {
+						for (int l = 0; l < state->Locations.size(); l++) {
+							if (p6 == state->Locations.at(l)) {
+								state->Locations.erase(state->Locations.begin() + l);
+								break;
+							}
+						}
+						state->Ww.erase(state->Ww.begin() + b);
+						state->info.number_W--;
+						if (state->info.number_W == 0) {
+							state->info.playing = false;
+						}
+					}
+				}
+				else {
+					move(v, state, i);
+				}
+			}
+		}
 		
 	}
 }
@@ -738,7 +779,7 @@ void board(int x, int y, State state) {
 		for (int j = 0; j < x; j++) {
 			printed = false;
 			if (i == 0 || i == y - 1) {
-				cout << "@";
+				cout << "#";
 				printed = true;
 			}
 			if (i != 0 && i != y - 1 && (j == x - 1 || j == 0)) {
@@ -777,9 +818,11 @@ void board(int x, int y, State state) {
 					break;
 				}
 			}
-			if (i == state->Pt.at(0)->get_position()->y && j == state->Pt.at(0)->get_position()->x) {
-				cout << "P";
-				printed = true;
+			if (state->Pt.size() > 0) {
+				if (i == state->Pt.at(0)->get_position()->y && j == state->Pt.at(0)->get_position()->x) {
+					cout << "P";
+					printed = true;
+				}
 			}
 			if (printed == false)
 				cout << " ";
