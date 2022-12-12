@@ -32,40 +32,40 @@ bool Map::get_time()const {
 // Checks if there is any object or creature and updates struct with souroundings properly
 static void check(State state, Creature* c) {
 	Point p = c->get_position();
-	S s = c->get_sour();
+	S s = c->get_surround();
 	for (int i = 0; i < state->Locations.size(); i++) {
 		Point pp = state->Locations.at(i);
 		if (p->x == (pp->x - 1) && p->y == pp->y)
-			s->right = true;			// he's on the right
+			s->right = true;			// He's on the right
 
 		if (p->x == (pp->x + 1) && p->y == pp->y)
-			s->left = true;				//he's on the left
+			s->left = true;				// He's on the left
 
 		if (p->x == pp->x && p->y == (pp->y - 1))
-			s->down = true;				//he's below
+			s->down = true;				// He's below
 
 		if (p->x == pp->x && p->y == (pp->y + 1))
-			s->up = true;				//he's above
+			s->up = true;				// He's above
 
 		if (p->x == (pp->x - 1) && p->y == (pp->y + 1))
-			s->upper_r = true;			//he's upper right
+			s->upper_r = true;			// He's upper right
 
 		if (p->x == (pp->x + 1) && p->y == (pp->y + 1))
-			s->upper_l = true;			//he's upper left
+			s->upper_l = true;			// He's upper left
 
 		if (p->x == (pp->x + 1) && p->y == (pp->y - 1))
-			s->lower_l = true;			//he's lower left
+			s->lower_l = true;			// He's lower left
 
 		if (p->x == (pp->x - 1) && p->y == (pp->y - 1))
-			s->lower_r = true;			//he's lower right
+			s->lower_r = true;			// He's lower right
 
 	}
-	c->set_sour(s);
+	c->set_surround(s);
 }
 
 // Returns struct with sourounding to original form
 static void reload(State state, Creature* cr) {
-	S s = cr->get_sour();
+	S s = cr->get_surround();
 	s->right = false;
 	s->left = false;
 	s->up = false;
@@ -74,7 +74,7 @@ static void reload(State state, Creature* cr) {
 	s->upper_l = false;
 	s->lower_l = false;
 	s->lower_r = false;
-	cr->set_sour(s);
+	cr->set_surround(s);
 }
 
 // Moves creature
@@ -91,7 +91,7 @@ void Creature::movement(State state,int i) {
 	//decide its movement + check that it does not go out of the map's border
 	Werewolf* w = state->Ww.at(i);
 	Point place = w->get_position();
-	S s = w->get_sour();
+	S s = w->get_surround();
 	int decide = rand() % 5;
 	switch (decide) {
 	case 0:
@@ -124,12 +124,12 @@ void Creature::movement(State state,int i) {
 	}
 }
 
-void Creature::set_sour(S surroundings) {
-	sour = surroundings;
+void Creature::set_surround(S surroundings) {
+	surround = surroundings;
 }
 
-S Creature::get_sour()const {
-	return sour;
+S Creature::get_surround()const {
+	return surround;
 }
 
 void Creature::set_position(Point pos) {
@@ -153,66 +153,72 @@ Point Object::get_position()const {
 void Avatar::movement(State state, char b) {
 	reload(state, this);
 	check(state, this);
-	S s = this->get_sour();
+	S s = this->get_surround();
 	Point p = this->get_position();
-	if (state->Pt.size() > 0) {
+	if (state->Pt.size() > 0) {													// If a potion exists
 		Point potion_p = state->Pt.at(0)->get_position();
 		switch (b) {
 		case 'w':
-			if (p->y > 1 && (s->up == false || p->y == potion_p->y + 1)) {
-				p->y--;							// up
+			if (p->y > 1 && (s->up == false || (p->y == potion_p->y + 1 && p->x == potion_p->x))) {
+				p->y--;															// Move up
 				this->set_position(p);
-				break;
 			}
+			break;
+
 		case 's':
-			if (p->y < state->map->get_length() - 2 && (s->down == false || p->y == potion_p->y - 1)) {
-				p->y++;							// down
+			if (p->y < state->map->get_length() - 2 && (s->down == false || (p->y == potion_p->y - 1 && p->x == potion_p->x))) {
+				p->y++;															// Move down
 				this->set_position(p);
-				break;
 			}
+			break;
+
 		case 'd':
-			if (p->x < state->map->get_width() - 2 && (s->right == false || p->x == potion_p->x - 1)) {
-				p->x++;							// right
+			if (p->x < state->map->get_width() - 2 && (s->right == false || (p->x == potion_p->x - 1 && p->y == potion_p->y))) {
+				p->x++;															// Move right
 				this->set_position(p);
-				break;
 			}
+			break;
+			
 		case 'a':
-			if (p->x > 1 && (s->left == false || p->x == potion_p->x + 1)) {
-				p->x--;							// left
+			if (p->x > 1 && (s->left == false || (p->x == potion_p->x + 1 && p->y == potion_p->y))) {
+				p->x--;															// Move left
 				this->set_position(p);
-				break;
 			}
+			break;
 		}
 	}
-	else {
+	else {																		// If potion has been collected by avatar
 		switch (b) {
 		case 'w':
 			if (p->y > 1 && s->up == false) {
-				p->y--;							// up
+				p->y--;															// Move up
 				this->set_position(p);
-				break;
 			}
+			break;
+
 		case 's':
 			if (p->y < state->map->get_length() - 2 && s->down == false) {
-				p->y++;							// down
+				p->y++;															// Move down
 				this->set_position(p);
-				break;
 			}
+			break;
+		
 		case 'd':
 			if (p->x < state->map->get_width() - 2 && s->right == false) {
-				p->x++;							// right
+				p->x++;															// Move right
 				this->set_position(p);
-				break;
 			}
+			break;
+			
 		case 'a':
-			if (p->x > 1 && s->left == false ) {
-				p->x--;							// left
+			if (p->x > 1 && s->left == false) {
+				p->x--;															// Move left
 				this->set_position(p);
-				break;
 			}
+			break;
 		}
 	}
-	this->set_sour(s);
+	this->set_surround(s);
 }
 
 void Avatar::set_potions(int ptns) {
@@ -223,38 +229,45 @@ int Avatar::get_potions()const {
 	return potions;
 }
 
-void Avatar::help_W(Werewolf* werewolf) {						// Help creature werewolf by adding 1 more health value
-	int prev_health = werewolf->get_health();
-	if (prev_health < 2) {										// If health is not max
-		werewolf->set_health(prev_health + 1);					// Then new health is previous value + 1
-	}
-}
-
-void Avatar::help_V(Vampire* vampire) {							// Help creature vampire by adding 1 more health value
-	int prev_health = vampire->get_health();
-	if (prev_health < 2) {										// If health is not max
-		vampire->set_health(prev_health + 1);					// Then new health is previous value + 1
+// Help your team by adding 1 more health value, using a potion
+void Avatar::help_team(State state) {
+	if (state->At.at(0)->get_potions() > 0) {									// If avatar has a potion
+		if (state->info.Team_W) {//+check daytime								// If player chose team werewolves
+			for (int i = 0; i < state->Ww.size(); i++) {						// Help them if their health is not max
+				if (state->Ww.at(i)->get_health() < 5) {
+					state->Ww.at(i)->set_health(state->Ww.at(i)->get_health() + 1);
+				}
+			}
+		}
+		else if(!state->info.Team_W) {// +check daytime							// If player chose team vampires
+			for (int i = 0; i < state->Vp.size(); i++) {						// Help them if their health is not max
+				if (state->Vp.at(i)->get_health() < 5) {
+					state->Vp.at(i)->set_health(state->Vp.at(i)->get_health() + 1);
+				}
+			}
+		}
+		state->At.at(0)->set_potions(state->At.at(0)->get_potions() - 1);		// Potions are 1 less now
 	}
 }
 
 // Werewolf
 void Werewolf::attack(Vampire* vampire) {
-	int attack_value = this->get_strength();					// Strength value
-	if (attack_value >= vampire->get_strength()) {				// If strength value is bigger that it's opponent's, attack
-		int damage = this->get_strength() - vampire->get_defence();	// Damage value
-		if (damage > 0) {										// If strength value is bigger than opponent's defence value
+	int attack_value = this->get_strength();									// Strength value
+	if (attack_value >= vampire->get_strength()) {								// If strength value is bigger that it's opponent's, attack
+		int damage = this->get_strength() - vampire->get_defence();				// Damage value
+		if (damage > 0) {														// If strength value is bigger than opponent's defence value
 			vampire->set_health(vampire->get_health() - damage);
 		}
 	}
 }
 
 void Werewolf::help(Werewolf* werewolf) {
-	int random = rand() % 2;									// Select randomly if a creature is going to help its ally
+	int random = rand() % 2;													// Select randomly if a creature is going to help its ally
 	switch (random) {
 	case 0:
-		if (this->get_medkit() > 0 && werewolf->get_health() < 5) {	// If number of medkit is >0 and health of ally is not max=5
-			werewolf->set_health(werewolf->get_health() + 1);	// Health of another creature +1
-			this->set_medkit(this->get_medkit() - 1);			// Medkit of this creature -1
+		if (this->get_medkit() > 0 && werewolf->get_health() < 5) {				// If number of medkit is >0 and health of ally is not max=5
+			werewolf->set_health(werewolf->get_health() + 1);					// Health of another creature +1
+			this->set_medkit(this->get_medkit() - 1);							// Medkit of this creature -1
 		}
 		break;
 	case 1:
@@ -299,22 +312,22 @@ int Werewolf::get_medkit()const {
 
 // Vampire
 void Vampire::attack(Werewolf* werewolf) {
-	int attack_value = this->get_strength();					// Strength value
-	if (attack_value >= werewolf->get_strength()) {				// If strength value is bigger that it's opponent's, attack
-		int damage = this->get_strength() - werewolf->get_defence();	// Damage value
-		if (damage > 0) {										// If strength value is bigger than opponent's defence value
+	int attack_value = this->get_strength();									// Strength value
+	if (attack_value >= werewolf->get_strength()) {								// If strength value is bigger that it's opponent's, attack
+		int damage = this->get_strength() - werewolf->get_defence();			// Damage value
+		if (damage > 0) {														// If strength value is bigger than opponent's defence value
 			werewolf->set_health(werewolf->get_health() - damage);
 		}
 	}
 }
 
 void Vampire::help(Vampire* vampire) {
-	int random = rand() % 2;									// Select randomly if a creature is going to help its ally
+	int random = rand() % 2;													// Select randomly if a creature is going to help its ally
 	switch (random) {
 	case 0:
-		if (this->get_medkit() > 0 && vampire->get_health() < 5) {	// If number of medkit is >0 and health of ally is not max=5
-			vampire->set_health(vampire->get_health() + 1);		// Health of another creature +1
-			this->set_medkit(this->get_medkit() - 1);			// Medkit of this creature -1
+		if (this->get_medkit() > 0 && vampire->get_health() < 5) {				// If number of medkit is >0 and health of ally is not max=5
+			vampire->set_health(vampire->get_health() + 1);						// Health of another creature +1
+			this->set_medkit(this->get_medkit() - 1);							// Medkit of this creature -1
 		}
 		break;
 	case 1:
@@ -326,7 +339,7 @@ void Vampire::help(Vampire* vampire) {
 void Vampire::movement(State state, int i) {
 	Vampire* v = state->Vp.at(i);
 	Point place = v->get_position();
-	S s = v->get_sour();
+	S s = v->get_surround();
 	int decide = rand() % 9;
 	switch (decide) {
 	case 0:
@@ -448,7 +461,7 @@ static Werewolf* create_w(State state, int x, int y ) {
 		}
 
 	} while (found);														// if a new location is found then stop searching where to place the object
-	w->set_sour(sour);
+	w->set_surround(sour);
 	w->set_health(health);
 	w->set_strength(strength);
 	w->set_defence(defense);
@@ -490,7 +503,7 @@ static Vampire* create_v(State state, int x, int y) {
 	v->set_defence(defense);
 	v->set_medkit(medkit);
 	v->set_position(position);
-	v->set_sour(sour);
+	v->set_surround(sour);
 											//nomizw edw tha prepei na kanoyme deallocate to position
 	return v;								// + kapoious elegxous gia na min exei themata sto interface
 }
@@ -519,7 +532,7 @@ static Avatar* create_avatar(State state, int x, int y) {
 
 	} while (found);														// if a new location is found then stop searching where to place the object
 	avatar->set_position(position);
-	avatar->set_sour(sour);
+	avatar->set_surround(sour);
 	return avatar;
 }
 
@@ -606,9 +619,9 @@ static Potion* create_potion(State state, int x, int y) {
 
 // Adds created objects in vectors
 static void add(State state, int x, int y) {
-	Avatar* avatar = create_avatar(state, x, y);	// Create Avatar
+	Avatar* avatar = create_avatar(state, x, y);							// Create Avatar
 	state->At.push_back(avatar);
-	for (int i = 0; i < x * y / 15; i++) {			// Create x*y/15 Werewolves and Vampires
+	for (int i = 0; i < x * y / 15; i++) {									// Create x*y/15 Werewolves and Vampires
 		Werewolf* w = create_w(state, x,y);
 		Vampire* v = create_v(state, x, y);
 		state->Ww.push_back(w);
@@ -619,7 +632,7 @@ static void add(State state, int x, int y) {
 
 
 	}
-	for (int i = 0; i < 5; i++) {					// Create i Trees and Water
+	for (int i = 0; i < 5; i++) {											// Create i Trees and Water
 		Tree* tree = create_tree(state, x, y);
 		Water* water = create_water(state, x, y);
 
@@ -627,7 +640,7 @@ static void add(State state, int x, int y) {
 		state->Wt.push_back(water);
 
 	}
-	Potion* potion = create_potion(state, x, y);	// Create potion
+	Potion* potion = create_potion(state, x, y);							// Create potion
 
 	state->Pt.push_back(potion);
 
@@ -826,10 +839,15 @@ void board(int x, int y, State state) {
 			}
 			if (printed == false)
 				cout << " ";
-
 		}
 		cout << endl;
-
+	}
+	cout << "Time: ";
+	if (state->map->get_time()) {
+		cout << "Night";
+	}
+	else {
+		cout << "Day";
 	}
 }
 

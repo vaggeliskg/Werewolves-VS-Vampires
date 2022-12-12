@@ -59,65 +59,51 @@ int main() {
 
 	// Game proceeds
 	while (state->info.playing) {								// If game has started
-		if (state->info.paused == false) {													// If game is not paused
+		if (state->info.paused == false) {						// If game is not paused
 			board(x, y, state);									// Print board, creatures and objects
-				/*for (int k = 0; k < state->Vp.size(); k++) {
-					cout << "v:" << state->Vp.at(k)->get_position()->x << "," << state->Vp.at(k)->get_position()->y << endl;
-				}
-				for (int k = 0; k < state->Ww.size(); k++) {
-					cout << "Ww:" << state->Ww.at(k)->get_position()->x << "," << state->Ww.at(k)->get_position()->y << endl;
-				}
-				for (int k = 0; k < state->Wt.size(); k++) {
-					cout << "W:" << state->Wt.at(k)->get_position()->x << "," << state->Wt.at(k)->get_position()->y << endl;
-				}
-				for (int k = 0; k < state->Tr.size(); k++) {
-					cout << "tr:" << state->Tr.at(k)->get_position()->x << "," << state->Tr.at(k)->get_position()->y << endl;
-				}*/
-				/*cout << "A:" << state->At.at(0)->get_position()->x << "," << state->At.at(0)->get_position()->y << endl;
-				if(state->Pt.size()>0)
-				cout << "Pt:" << state->Pt.at(0)->get_position()->x << "," << state->Pt.at(0)->get_position()->y << endl;
-				for (int k = 0; k < state->Locations.size(); k++) {
-					cout << "Loc:" << state->Locations.at(k)->x << "," << state->Locations.at(k)->y << endl;
-				}*/
-			Sleep(500);										// after delay of 500 milliseconds
-			state_update(state);
+			Sleep(500);											// After delay of 500 milliseconds
+			state_update(state);								// Update game state
 		}
-		if (!_kbhit() && state->info.paused == false) {
-			system("cls");
+		if (!_kbhit() && state->info.paused == false) {			// If there is not any key pressed and game is not paused
+			SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { 0, 0 }); // Cursor goes at (0,0)
 			continue;
 		}
-		else if (_kbhit()) {										// If any key is pressed
-			switch (_getch()) {								// Get key pressed
-			case 'w': state->At.at(0)->movement(state, 'w'); break;
-			case 'd': state->At.at(0)->movement(state, 'd'); break;
-			case 's': state->At.at(0)->movement(state, 's'); break;
-			case 'a': state->At.at(0)->movement(state, 'a'); break;
-			case 'q':										// If q is pressed then
-				state->info.playing = false;				// Game ends
-				system("cls");								// Clear screen
-				break;
-			case 'p':										// If p is pressed, change the pause condition
-				if (state->info.paused == false) {
-					state->info.paused = true;
-					system("cls");
-					menu(state);
-				}
-				else {										// If p pressed and already in menu
-					state->info.paused = false;
-					system("cls");							// Clear screen
-				}
-				break;
+		else if (_kbhit()) {									// If any key is pressed
+			switch (_getch()) {									// Get key pressed
+				case 'w': state->At.at(0)->movement(state, 'w'); break;
+				case 'd': state->At.at(0)->movement(state, 'd'); break;
+				case 's': state->At.at(0)->movement(state, 's'); break;
+				case 'a': state->At.at(0)->movement(state, 'a'); break;
+				case 'q':										// If q is pressed
+					state->info.playing = false;				// Game ends
+					system("cls");								// Clear screen
+					break;
+				case 'p':										// If p is pressed, change the pause condition
+					if (state->info.paused == false) {
+						state->info.paused = true;
+						system("cls");
+						menu(state);							// Print menu
+					}
+					else {										// If p pressed and already in menu
+						state->info.paused = false;
+						system("cls");							// Clear screen
+					}
+					break;
+				case 'h': state->At.at(0)->help_team(state); break;
 			}
-
 		}
 
 		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { 0, 0 }); // Cursor goes at (0,0)
 	}
-	if (state->info.number_W == 0) {
+	system("cls");												// Clear screen
+	if (state->info.number_W == 0) {							// If all werewolves died
 		cout << "VAMPIRES WON!" << endl;
 	}
-	else {
+	else if (state->info.number_V == 0) {						// If all vampires died
 		cout << "WEREWOLVES WON!" << endl;
+	}
+	else {														// If game ended for any other reason, for example player quit
+		cout << "YOU QUIT :(" << endl;
 	}
 
 	return 0;

@@ -57,13 +57,13 @@ public:
 class Creature {
 protected:
     Point position;                         // Position in map
-    S sour;
+    S surround;                             // Objects surrounding this creature
 public:
     virtual void movement(State state, int first);
     void set_position(Point position);
     Point get_position()const;
-    void set_sour(S sour);
-    S get_sour()const;
+    void set_surround(S sour);
+    S get_surround()const;
 };
 
 // Objects can be Water, Trees or Potion
@@ -85,8 +85,7 @@ public:
     void movement(State state, char character);
     void set_potions(int potions);
     int get_potions()const;
-    void help_W(Werewolf*);                 // Helps creature Werewolf by adding 1 more health value
-    void help_V(Vampire*);                  // Helps creature Vampire by adding 1 more health value
+    void help_team(State state);
 };
 
 class Werewolf :public Creature {
@@ -151,9 +150,6 @@ struct state {
 // More
 // Creates and returns the state of the game
 State state_create(Map* map);
-
-// Returns game information to state
-StateInfo state_info(State state);
 
 // Updates the state of the game depending the keys that are pressed
 void state_update(State state);
