@@ -232,21 +232,22 @@ int Avatar::get_potions()const {
 // Help your team by adding 1 more health value, using a potion
 void Avatar::help_team(State state) {
 	if (state->At.at(0)->get_potions() > 0) {									// If avatar has a potion
-		if (state->info.Team_W) {//+check daytime								// If player chose team werewolves
+		if (state->info.Team_W && state->map->get_time() == true) {				// If player chose team werewolves
 			for (int i = 0; i < state->Ww.size(); i++) {						// Help them if their health is not max
 				if (state->Ww.at(i)->get_health() < 5) {
 					state->Ww.at(i)->set_health(state->Ww.at(i)->get_health() + 1);
 				}
 			}
+			state->At.at(0)->set_potions(state->At.at(0)->get_potions() - 1);	// Potions are 1 less now
 		}
-		else if(!state->info.Team_W) {// +check daytime							// If player chose team vampires
+		else if(!state->info.Team_W && state->map->get_time() == false) {		// If player chose team vampires
 			for (int i = 0; i < state->Vp.size(); i++) {						// Help them if their health is not max
 				if (state->Vp.at(i)->get_health() < 5) {
 					state->Vp.at(i)->set_health(state->Vp.at(i)->get_health() + 1);
 				}
 			}
+			state->At.at(0)->set_potions(state->At.at(0)->get_potions() - 1);	// Potions are 1 less now
 		}
-		state->At.at(0)->set_potions(state->At.at(0)->get_potions() - 1);		// Potions are 1 less now
 	}
 }
 

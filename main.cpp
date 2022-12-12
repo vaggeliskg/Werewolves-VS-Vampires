@@ -5,6 +5,7 @@ using namespace std;
 
 int main() {
 	int x, y;					// x = width of map, y = length/height of map
+	int timer = 0;
 	string team;
 
 	// Select dimensions of map
@@ -63,6 +64,16 @@ int main() {
 			board(x, y, state);									// Print board, creatures and objects
 			Sleep(500);											// After delay of 500 milliseconds
 			state_update(state);								// Update game state
+			timer++;
+			if (timer == 20) {
+				if (state->map->get_time()) {
+					state->map->set_time(false);
+				}
+				else {
+					state->map->set_time(true);
+				}
+				timer = 0;
+			}
 		}
 		if (!_kbhit() && state->info.paused == false) {			// If there is not any key pressed and game is not paused
 			SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { 0, 0 }); // Cursor goes at (0,0)
