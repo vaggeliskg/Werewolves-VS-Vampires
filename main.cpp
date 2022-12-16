@@ -22,10 +22,10 @@ int main() {
 	cout << endl;
 
 	// Create map of the game
-	Map* ptr = new Map;
-	ptr->set_length(y);
+	Map* ptr = new Map(y,x,false);
+	/*ptr->set_length(y);
 	ptr->set_width(x);
-	ptr->set_time(false);
+	ptr->set_time(false);*/
 
 	// Create state of the game
 	State state = state_create(ptr);
@@ -116,6 +116,11 @@ int main() {
 	else {														// If game ended for any other reason, for example player quit
 		cout << "YOU QUIT :(" << endl;
 	}
+
+	//deallocation
+
+	delete ptr;
+	delete state;
 
 	return 0;
 }

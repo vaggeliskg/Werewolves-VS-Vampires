@@ -43,8 +43,10 @@ private:
     int width;
     bool night;                             // Night or day
 public:
-    void set_length(int);
-    void set_width(int);
+    Map(int, int, bool);                    // constructor for map
+    ~Map();
+    /*void set_length(int);
+    void set_width(int);*/
     void set_time(bool);
 
     int get_length()const;
@@ -72,19 +74,19 @@ protected:
     Point position;
 public:
     void set_position(Point position);
-    Point get_position()const;
+    Point get_position()const;                                                
 };
 
 class Werewolf;
 class Vampire;
 
-class Avatar :public Creature {
+class Avatar :public Creature {                                                                                                                
 private:
     int potions = 1;                        // Number of potions [0,2]
 public:
     void movement(State state, char character);
     void set_potions(int potions);
-    int get_potions()const;
+    int get_potions()const;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
     void help_team(State state);
 };
 

@@ -5,13 +5,22 @@
 using namespace std;
 
 // Map
-void Map::set_length(int lngt) {
-	length = lngt;
+
+Map::Map(int l, int w, bool a) {
+	length = l;
+	width = w;
+	night = a;
 }
 
-void Map::set_width(int wdt) {
-	width = wdt;
-}
+Map::~Map() {}
+
+//void Map::set_length(int lngt) {
+//	length = lngt;
+//}
+//
+//void Map::set_width(int wdt) {
+//	width = wdt;
+//}
 
 void Map::set_time(bool a) {
 	night = a;
@@ -659,22 +668,12 @@ State state_create(Map* m) {
 	s->info.number_W = 0;
 	s->info.Team_W = false;
 	s->map = m;
-	s->map->set_length(m->get_length());
-	s->map->set_width(m->get_width());
-	s->map->set_time(m->get_time());
-
-
 
 	add(s, s->map->get_width(), s->map->get_length());
-
-
 
 	return s;
 }
 
-StateInfo state_info(State state) {
-	return &state->info;
-}
 
 void state_update(State state) {
 	if (state->info.playing) {
@@ -685,6 +684,7 @@ void state_update(State state) {
 			Point potion_pos = potion->get_position();
 			if (avatar_pos->x == potion_pos->x && avatar_pos->y == potion_pos->y) {
 				avatar->set_potions(avatar->get_potions() + 1);
+				board(state->map->get_width(), state->map->get_length(), state);
 				for (int l = 0; l < state->Locations.size(); l++) {
 					if (potion_pos == state->Locations.at(l)) {
 						state->Locations.erase(state->Locations.begin() + l);
@@ -712,6 +712,7 @@ void state_update(State state) {
 					move(w, state, i);
 				}
 			}
+
 			for (int j = 0; j < state->Vp.size(); j++) {
 				Vampire* vp = state->Vp.at(j);
 				Point p3 = vp->get_position();
@@ -848,7 +849,7 @@ void board(int x, int y, State state) {
 		cout << "Night";
 	}
 	else {
-		cout << "Day";
+		cout << "Day  ";
 	}
 }
 
