@@ -109,16 +109,60 @@ int main() {
 	}
 	else if (state->info.number_V == 0) {						// If all vampires died
 		cout << "WEREWOLVES WON!" << endl;
+		
 	}
 	else {														// If game ended for any other reason, for example player quit
 		cout << "YOU QUIT :(" << endl;
 	}
 
-	//Deallocation
+	//Deallocation of remaining objects 
 
 	delete ptr;
+	
+	for (int i = 0; i < state->Locations.size(); i++) {
+		delete state->Locations.at(i);
+		state->Locations.erase(state->Locations.begin() + i);
+	}
+	state->Locations.shrink_to_fit();
+
+	delete state->At.at(0)->get_surround();
+	delete state->At.at(0);
+	state->At.erase(state->At.begin());
+	state->At.shrink_to_fit();
+
+	for (int k = 0; k < state->Vp.size(); k++) {
+		delete state->Vp.at(k)->get_surround();
+		delete state->Vp.at(k);
+		state->Vp.erase(state->Vp.begin() + k);
+	}
+	state->Vp.shrink_to_fit();
+
+	for (int k = 0; k < state->Tr.size(); k++) {
+		delete state->Tr.at(k);
+		state->Tr.erase(state->Tr.begin() + k);
+	}
+	state->Tr.shrink_to_fit();
+
+	for (int k = 0; k < state->Ww.size(); k++) {
+		delete state->Ww.at(k)->get_surround();
+		delete state->Ww.at(k);
+		state->Ww.erase(state->Ww.begin() + k);
+	}
+	state->Ww.shrink_to_fit();
+
+	for (int k = 0; k < state->Wt.size(); k++) {
+		delete state->Wt.at(k);
+		state->Wt.erase(state->Wt.begin() + k);
+	}
+	state->Wt.shrink_to_fit();
+
+	if (state->Pt.size() > 0) {
+		delete state->Pt.at(0);
+		state->Pt.erase(state->Pt.begin());									// Erase potion from vector Pt
+		state->Pt.shrink_to_fit();
+	}
 
 	delete state;
 
-	return 0;
+ 	return 0;
 }

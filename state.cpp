@@ -676,14 +676,19 @@ void state_update(State state) {
 			Point potion_pos = potion->get_position();
 			if (avatar_pos->x == potion_pos->x && avatar_pos->y == potion_pos->y) { // Avatar collects it
 				avatar->set_potions(avatar->get_potions() + 1);						// Number of potions that avatar has +1
+				system("cls");
 				board(state->map->get_width(), state->map->get_length(), state);	// Print board
+				system("cls");
 				for (int l = 0; l < state->Locations.size(); l++) {
 					if (potion_pos == state->Locations.at(l)) {
+						delete state->Locations.at(l);
 						state->Locations.erase(state->Locations.begin() + l);		// Erase potion from vector Locations
 						break;
 					}
-				}
+				} 
+				delete state->Pt.at(0);
 				state->Pt.erase(state->Pt.begin());									// Erase potion from vector Pt
+				state->Pt.shrink_to_fit();
 			}
 		}
 
@@ -714,10 +719,13 @@ void state_update(State state) {
 					if ((vp->get_health()) <= 0) {									// If vampire dies
 						for (int l = 0; l < state->Locations.size(); l++) {
 							if (p3 == state->Locations.at(l)) {
+								delete state->Locations.at(l);
 								state->Locations.erase(state->Locations.begin() + l); // Erase it from vector Locations
 								break;
 							}
 						}
+						delete state->Vp.at(j)->get_surround();
+						delete  state->Vp.at(j);
 						state->Vp.erase(state->Vp.begin() + j );					// Erase it from vector Vp
 						state->info.number_V--;
 						if (state->info.number_V == 0) {							// If every vampire dies, game stops
@@ -757,10 +765,13 @@ void state_update(State state) {
 					if ((wolf->get_health()) <= 0) {								// If werewolf dies then delete it from vector Locations and Ww
 						for (int l = 0; l < state->Locations.size(); l++) {
 							if (p6 == state->Locations.at(l)) {
+								delete state->Locations.at(l);
 								state->Locations.erase(state->Locations.begin() + l);
 								break;
 							}
 						}
+						delete state->Ww.at(b)->get_surround();
+						delete state->Ww.at(b);
 						state->Ww.erase(state->Ww.begin() + b);
 						state->info.number_W--;
 						if (state->info.number_W == 0) {							// If all werewolves died, game stops
