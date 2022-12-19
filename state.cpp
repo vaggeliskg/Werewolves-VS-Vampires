@@ -866,3 +866,52 @@ void menu(State state) {
 	cout << "*press 'h' to use a potion*" << endl;
 }
 
+// Deallocation of memory
+void deallocation(State state) {
+	delete state->map;																// Delete map
+
+	for (int i = 0; i < state->Locations.size(); i++) {								// Delete locations
+		delete state->Locations.at(i);
+		state->Locations.erase(state->Locations.begin() + i);
+	}
+	state->Locations.shrink_to_fit();												// Reduces capacity to match size
+
+	delete state->At.at(0)->get_surround();											// Delete avatar's surroundings
+	delete state->At.at(0);															// Delete avatar
+	state->At.erase(state->At.begin());												// Erase avatar from vector
+	state->At.shrink_to_fit();
+
+	for (int k = 0; k < state->Vp.size(); k++) {									// Delete vampires
+		delete state->Vp.at(k)->get_surround();
+		delete state->Vp.at(k);
+		state->Vp.erase(state->Vp.begin() + k);
+	}
+	state->Vp.shrink_to_fit();
+
+	for (int k = 0; k < state->Tr.size(); k++) {									// Delete trees
+		delete state->Tr.at(k);
+		state->Tr.erase(state->Tr.begin() + k);
+	}
+	state->Tr.shrink_to_fit();
+
+	for (int k = 0; k < state->Ww.size(); k++) {									// Delete werewolves
+		delete state->Ww.at(k)->get_surround();
+		delete state->Ww.at(k);
+		state->Ww.erase(state->Ww.begin() + k);
+	}
+	state->Ww.shrink_to_fit();
+
+	for (int k = 0; k < state->Wt.size(); k++) {									// Delete water
+		delete state->Wt.at(k);
+		state->Wt.erase(state->Wt.begin() + k);
+	}
+	state->Wt.shrink_to_fit();
+
+	if (state->Pt.size() > 0) {														// Delete potion
+		delete state->Pt.at(0);
+		state->Pt.erase(state->Pt.begin());
+		state->Pt.shrink_to_fit();
+	}
+
+	delete state;																	// Delete state of game
+}

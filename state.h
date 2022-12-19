@@ -159,3 +159,6 @@ void board(int x, int y, State state);
 // Prints menu of game and shows game information
 void menu(State state);
 
+// Deallocate memory
+void deallocation(State state);
+
