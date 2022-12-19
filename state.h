@@ -9,9 +9,9 @@ using namespace std;
 // Condition of game (handle)
 typedef struct state* State;
 
-// Information about which keys are pressed
+// Information about surrounding objects
 typedef struct surroundings {
-    bool up;						        // True if this key is pressed
+    bool up;						        // True if there is an object in this location
     bool down;
     bool left;
     bool right;
@@ -45,10 +45,7 @@ private:
 public:
     Map(int, int, bool);                    // constructor for map
     ~Map();
-    /*void set_length(int);
-    void set_width(int);*/
     void set_time(bool);
-
     int get_length()const;
     int get_width()const;
     bool get_time()const;
@@ -139,13 +136,13 @@ class Potion :public Object {};
 struct state {
     struct state_info info;
     Map* map = NULL;
-    vector <Werewolf*> Ww;
-    vector <Vampire*> Vp;
-    vector <Avatar*> At;
-    vector <Tree*> Tr;
-    vector <Water*> Wt;
-    vector <Potion*> Pt;
-    vector <Point> Locations;
+    vector <Werewolf*> Ww;                  // Vector that contains werewolves
+    vector <Vampire*> Vp;                   // Vector that contains vampires
+    vector <Avatar*> At;                    // Vector that contains avatar
+    vector <Tree*> Tr;                      // Vector that contains trees
+    vector <Water*> Wt;                     // Vector that contains water
+    vector <Potion*> Pt;                    // Vector that contains potion
+    vector <Point> Locations;               // Vector that contains each object location
 };
 
 

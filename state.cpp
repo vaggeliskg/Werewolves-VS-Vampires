@@ -5,7 +5,6 @@
 using namespace std;
 
 // Map
-
 Map::Map(int l, int w, bool a) {
 	length = l;
 	width = w;
@@ -14,17 +13,14 @@ Map::Map(int l, int w, bool a) {
 
 Map::~Map() {}
 
-//void Map::set_length(int lngt) {
-//	length = lngt;
-//}
-//
-//void Map::set_width(int wdt) {
-//	width = wdt;
-//}
-
 void Map::set_time(bool a) {
 	night = a;
 }
+
+bool Map::get_time()const {
+	return night;
+}
+
 int Map::get_length()const {
 	return length;
 
@@ -32,10 +28,6 @@ int Map::get_length()const {
 
 int Map::get_width()const {
 	return width;
-}
-
-bool Map::get_time()const {
-	return night;
 }
 
 // Checks if there is any object or creature and updates struct with souroundings properly
@@ -96,8 +88,8 @@ static void move(Creature* cr, State state,int i) {
 
 
 // Creature
+// Decide it's movement + check that it does not go out of the map's border
 void Creature::movement(State state,int i) {
-	//decide its movement + check that it does not go out of the map's border
 	Werewolf* w = state->Ww.at(i);
 	Point place = w->get_position();
 	S s = w->get_surround();
@@ -159,6 +151,7 @@ Point Object::get_position()const {
 }
 
 // Avatar
+// Decide it's movement + check that it does not go out of the map's border
 void Avatar::movement(State state, char b) {
 	reload(state, this);
 	check(state, this);
@@ -318,8 +311,6 @@ int Werewolf::get_medkit()const {
 	return medkit;
 }
 
-
-
 // Vampire
 void Vampire::attack(Werewolf* werewolf) {
 	int attack_value = this->get_strength();									// Strength value
@@ -346,6 +337,7 @@ void Vampire::help(Vampire* vampire) {
 	}
 }
 
+// Decide it's movement + check that it does not go out of the map's border
 void Vampire::movement(State state, int i) {
 	Vampire* v = state->Vp.at(i);
 	Point place = v->get_position();
@@ -455,22 +447,22 @@ static Werewolf* create_w(State state, int x, int y ) {
 	Point position = new point;
 	bool found = false;
 	do {
-		position->x = (rand() % (x - 2)) + 1;								// find one position
+		position->x = (rand() % (x - 2)) + 1;								// Find one position
 		position->y = (rand() % (y - 2)) + 1;
-		for (int i = 0; i < state->Locations.size(); i++) {					// iterate vector with locations
-			if (state->Locations.at(i)->x == position->x && state->Locations.at(i)->y == position->y) {					// if position already exists in vector
-				found = true;												// make found true
+		for (int i = 0; i < state->Locations.size(); i++) {					// Iterate vector with locations
+			if (state->Locations.at(i)->x == position->x && state->Locations.at(i)->y == position->y) {					// If position already exists in vector
+				found = true;												// Make found true
 				break;
 			}
 			else {
-				found = false;												// if position does not already exists make found false
+				found = false;												// If position does not already exists make found false
 			}
 		}
-		if (found == false) {												// if found stayed false after the iteration
-			state->Locations.push_back(position);							// then keep location in vector
+		if (found == false) {												// If found stayed false after the iteration
+			state->Locations.push_back(position);							// Then keep location in vector
 		}
 
-	} while (found);														// if a new location is found then stop searching where to place the object
+	} while (found);														// If a new location is found then stop searching where to place the object
 	w->set_surround(sour);
 	w->set_health(health);
 	w->set_strength(strength);
@@ -492,30 +484,30 @@ static Vampire* create_v(State state, int x, int y) {
 	Point position = new point;
 	bool found = false;
 	do {
-		position->x = (rand() % (x - 2)) + 1;								// find one position
+		position->x = (rand() % (x - 2)) + 1;								// Find one position
 		position->y = (rand() % (y - 2)) + 1;
-		for (int i = 0; i < state->Locations.size(); i++) {					// iterate vector with locations
-			if (state->Locations.at(i)->x == position->x && state->Locations.at(i)->y == position->y) {					// if position already exists in vector
-				found = true;												// make found true
+		for (int i = 0; i < state->Locations.size(); i++) {					// Iterate vector with locations
+			if (state->Locations.at(i)->x == position->x && state->Locations.at(i)->y == position->y) {					// If position already exists in vector
+				found = true;												// Make found true
 				break;
 			}
 			else {
-				found = false;												// if position does not already exists make found false
+				found = false;												// If position does not already exists make found false
 			}
 		}
-		if (found == false) {												// if found stayed false after the iteration
-			state->Locations.push_back(position);							// then keep location in vector
+		if (found == false) {												// If found stayed false after the iteration
+			state->Locations.push_back(position);							// Then keep location in vector
 		}
 
-	} while (found);														// if a new location is found then stop searching where to place the object
+	} while (found);														// If a new location is found then stop searching where to place the object
 	v->set_health(health);
 	v->set_strength(strength);
 	v->set_defence(defense);
 	v->set_medkit(medkit);
 	v->set_position(position);
 	v->set_surround(sour);
-											//nomizw edw tha prepei na kanoyme deallocate to position
-	return v;								// + kapoious elegxous gia na min exei themata sto interface
+
+	return v;
 }
 
 // Creates avatar
@@ -525,22 +517,22 @@ static Avatar* create_avatar(State state, int x, int y) {
 	S sour = new surroundings;
 	bool found = false;
 	do {
-		position->x = (rand() % (x - 2)) + 1;								// find one position
+		position->x = (rand() % (x - 2)) + 1;								// Find one position
 		position->y = (rand() % (y - 2)) + 1;
-		for (int i = 0; i < state->Locations.size(); i++) {					// iterate vector with locations
-			if (state->Locations.at(i)->x == position->x && state->Locations.at(i)->y == position->y) {					// if position already exists in vector
-				found = true;												// make found true
+		for (int i = 0; i < state->Locations.size(); i++) {					// Iterate vector with locations
+			if (state->Locations.at(i)->x == position->x && state->Locations.at(i)->y == position->y) {					// If position already exists in vector
+				found = true;												// Make found true
 				break;
 			}
 			else {
-				found = false;												// if position does not already exists make found false
+				found = false;												// If position does not already exists make found false
 			}
 		}
-		if (found == false) {												// if found stayed false after the iteration
-			state->Locations.push_back(position);							// then keep location in vector
+		if (found == false) {												// If found stayed false after the iteration
+			state->Locations.push_back(position);							// Then keep location in vector
 		}
 
-	} while (found);														// if a new location is found then stop searching where to place the object
+	} while (found);														// If a new location is found then stop searching where to place the object
 	avatar->set_position(position);
 	avatar->set_surround(sour);
 	return avatar;
@@ -552,22 +544,22 @@ static Tree* create_tree(State state, int x, int y) {
 	Point position = new point;
 	bool found = false;
 	do {
-		position->x = (rand() % (x - 2)) + 1;								// find one position
+		position->x = (rand() % (x - 2)) + 1;								// Find one position
 		position->y = (rand() % (y - 2)) + 1;
-		for (int i = 0; i < state->Locations.size(); i++) {					// iterate vector with locations
-			if (state->Locations.at(i)->x == position->x && state->Locations.at(i)->y == position->y) {					// if position already exists in vector
-				found = true;												// make found true
+		for (int i = 0; i < state->Locations.size(); i++) {					// Iterate vector with locations
+			if (state->Locations.at(i)->x == position->x && state->Locations.at(i)->y == position->y) {					// If position already exists in vector
+				found = true;												// Make found true
 				break;
 			}
 			else {
-				found = false;												// if position does not already exists make found false
+				found = false;												// If position does not already exists make found false
 			}
 		}
-		if (found == false) {												// if found stayed false after the iteration
-			state->Locations.push_back(position);							// then keep location in vector
+		if (found == false) {												// If found stayed false after the iteration
+			state->Locations.push_back(position);							// Then keep location in vector
 		}
 
-	} while (found);														// if a new location is found then stop searching where to place the object
+	} while (found);														// If a new location is found then stop searching where to place the object
 	tree->set_position(position);
 
 	return tree;
@@ -579,22 +571,22 @@ static Water* create_water(State state, int x, int y) {
 	Point position = new point;
 	bool found = false;
 	do {
-		position->x = (rand() % (x - 2)) + 1;								// find one position
+		position->x = (rand() % (x - 2)) + 1;								// Find one position
 		position->y = (rand() % (y - 2)) + 1;
-		for (int i = 0; i < state->Locations.size(); i++) {					// iterate vector with locations
-			if (state->Locations.at(i)->x == position->x && state->Locations.at(i)->y == position->y) {					// if position already exists in vector
-				found = true;												// make found true
+		for (int i = 0; i < state->Locations.size(); i++) {					// Iterate vector with locations
+			if (state->Locations.at(i)->x == position->x && state->Locations.at(i)->y == position->y) {					// If position already exists in vector
+				found = true;												// Make found true
 				break;
 			}
 			else {
-				found = false;												// if position does not already exists make found false
+				found = false;												// If position does not already exists make found false
 			}
 		}
-		if (found == false) {												// if found stayed false after the iteration
-			state->Locations.push_back(position);							// then keep location in vector
+		if (found == false) {												// If found stayed false after the iteration
+			state->Locations.push_back(position);							// Then keep location in vector
 		}
 
-	} while (found);														// if a new location is found then stop searching where to place the object
+	} while (found);														// If a new location is found then stop searching where to place the object
 	water->set_position(position);
 
 	return water;
@@ -606,22 +598,22 @@ static Potion* create_potion(State state, int x, int y) {
 	Point position = new point;
 	bool found = false;
 	do {
-		position->x = (rand() % (x - 2)) + 1;								// find one position
+		position->x = (rand() % (x - 2)) + 1;								// Find one position
 		position->y = (rand() % (y - 2)) + 1;
-		for (int i = 0; i < state->Locations.size(); i++) {					// iterate vector with locations
-			if (state->Locations.at(i)->x == position->x && state->Locations.at(i)->y == position->y) {					// if position already exists in vector
-				found = true;												// make found true
+		for (int i = 0; i < state->Locations.size(); i++) {					// Iterate vector with locations
+			if (state->Locations.at(i)->x == position->x && state->Locations.at(i)->y == position->y) {					// If position already exists in vector
+				found = true;												// Make found true
 				break;
 			}
 			else {
-				found = false;												// if position does not already exists make found false
+				found = false;												// If position does not already exists make found false
 			}
 		}
-		if (found == false) {												// if found stayed false after the iteration
-			state->Locations.push_back(position);							// then keep location in vector
+		if (found == false) {												// If found stayed false after the iteration
+			state->Locations.push_back(position);							// Then keep location in vector
 		}
 
-	} while (found);														// if a new location is found then stop searching where to place the object
+	} while (found);														// If a new location is found then stop searching where to place the object
 	potion->set_position(position);
 
 	return potion;
@@ -669,43 +661,43 @@ State state_create(Map* m) {
 	s->info.Team_W = false;
 	s->map = m;
 
-	add(s, s->map->get_width(), s->map->get_length());
+	add(s, s->map->get_width(), s->map->get_length());						// Add objects
 
 	return s;
 }
 
-
+// Updates the state of the game
 void state_update(State state) {
 	if (state->info.playing) {
 		Avatar* avatar = state->At.at(0);
 		Point avatar_pos = avatar->get_position();
-		if (state->Pt.size() > 0) {
+		if (state->Pt.size() > 0) {											// If there is a potion
 			Potion* potion = state->Pt.at(0);
 			Point potion_pos = potion->get_position();
-			if (avatar_pos->x == potion_pos->x && avatar_pos->y == potion_pos->y) {
-				avatar->set_potions(avatar->get_potions() + 1);
-				board(state->map->get_width(), state->map->get_length(), state);
+			if (avatar_pos->x == potion_pos->x && avatar_pos->y == potion_pos->y) { // Avatar collects it
+				avatar->set_potions(avatar->get_potions() + 1);						// Number of potions that avatar has +1
+				board(state->map->get_width(), state->map->get_length(), state);	// Print board
 				for (int l = 0; l < state->Locations.size(); l++) {
 					if (potion_pos == state->Locations.at(l)) {
-						state->Locations.erase(state->Locations.begin() + l);
+						state->Locations.erase(state->Locations.begin() + l);		// Erase potion from vector Locations
 						break;
 					}
 				}
-				state->Pt.erase(state->Pt.begin());
+				state->Pt.erase(state->Pt.begin());									// Erase potion from vector Pt
 			}
 		}
 
-		for (int i = 0; i < state->Ww.size(); i++) {
+		for (int i = 0; i < state->Ww.size(); i++) {								// Iterate vector with werewolves
 			Werewolf* w = state->Ww.at(i);
 			Point p1 = w->get_position();
 			for (int k = 0; k < state->Ww.size(); k++) {
 				Werewolf* w_2 = state->Ww.at(k);
 				Point p2 = w_2->get_position();
-				if (abs(p1->x - p2->x) <= 1 && abs(p1->y - p2->y) <= 1) {
-					if (w == w_2) { continue; }			
+				if (abs(p1->x - p2->x) <= 1 && abs(p1->y - p2->y) <= 1) {			// If it finds another werewolf near
+					if (w == w_2) { continue; }										// Continue if it's the same creature
 					else {
-						w->help(w_2);
-						move(w_2, state, k);
+						w->help(w_2);												// Help ally
+						move(w_2, state, k);										// Then move
 					}
 				}
 				else {
@@ -716,22 +708,21 @@ void state_update(State state) {
 			for (int j = 0; j < state->Vp.size(); j++) {
 				Vampire* vp = state->Vp.at(j);
 				Point p3 = vp->get_position();
-				if (abs(p1->x - p3->x) <= 1 && abs(p1->y - p3->y) <= 1) {
-					w->attack(vp);
+				if (abs(p1->x - p3->x) <= 1 && abs(p1->y - p3->y) <= 1) {			// If it finds a vampire near
+					w->attack(vp);													// Attack and move
 					move(vp, state, j);
-					if ((vp->get_health()) <= 0) {
+					if ((vp->get_health()) <= 0) {									// If vampire dies
 						for (int l = 0; l < state->Locations.size(); l++) {
 							if (p3 == state->Locations.at(l)) {
-								state->Locations.erase(state->Locations.begin() + l);
+								state->Locations.erase(state->Locations.begin() + l); // Erase it from vector Locations
 								break;
 							}
 						}
-						state->Vp.erase(state->Vp.begin() + j );
+						state->Vp.erase(state->Vp.begin() + j );					// Erase it from vector Vp
 						state->info.number_V--;
-						if (state->info.number_V == 0) {
+						if (state->info.number_V == 0) {							// If every vampire dies, game stops
 							state->info.playing = false;
 						}
-						//deallocation of pointers , destructors, delete etc
 					}
 				}
 				else {
@@ -740,13 +731,13 @@ void state_update(State state) {
 			}
 		}
 
-		for (int i = 0; i < state->Vp.size(); i++) {
+		for (int i = 0; i < state->Vp.size(); i++) {								// Iterate vector with vampires
 			Vampire* v = state->Vp.at(i);
 			Point p4 = v->get_position();
 			for (int a = 0; a < state->Vp.size(); a++) {
 				Vampire* vv = state->Vp.at(a);
 				Point p5 = vv->get_position();
-				if (abs(p4->x - p5->x) <= 1 && abs(p4->y - p5->y) <= 1) {
+				if (abs(p4->x - p5->x) <= 1 && abs(p4->y - p5->y) <= 1) {			// If it finds another vampire near, help and move
 					if (v == vv) { continue; }			
 					else {
 						v->help(vv);
@@ -760,10 +751,10 @@ void state_update(State state) {
 			for (int b = 0; b < state->Ww.size(); b++) {
 				Werewolf* wolf= state->Ww.at(b);
 				Point p6 = wolf->get_position();
-				if (abs(p4->x - p6->x) <= 1 && abs(p4->y - p6->y) <= 1) {
+				if (abs(p4->x - p6->x) <= 1 && abs(p4->y - p6->y) <= 1) {			// If there is a werewolf near, attack
 					v->attack(wolf);
 					move(wolf, state, b);
-					if ((wolf->get_health()) <= 0) {
+					if ((wolf->get_health()) <= 0) {								// If werewolf dies then delete it from vector Locations and Ww
 						for (int l = 0; l < state->Locations.size(); l++) {
 							if (p6 == state->Locations.at(l)) {
 								state->Locations.erase(state->Locations.begin() + l);
@@ -772,7 +763,7 @@ void state_update(State state) {
 						}
 						state->Ww.erase(state->Ww.begin() + b);
 						state->info.number_W--;
-						if (state->info.number_W == 0) {
+						if (state->info.number_W == 0) {							// If all werewolves died, game stops
 							state->info.playing = false;
 						}
 					}
@@ -789,7 +780,7 @@ void state_update(State state) {
 // Functions that are used in main() in order to print the game and it's main menu
 // Print board of game, creatures, objects
 void board(int x, int y, State state) {
-	bool printed;
+	bool printed;																	// If a character has been already printed
 	for (int i = 0; i < y; i++) {
 		for (int j = 0; j < x; j++) {
 			printed = false;
@@ -801,50 +792,50 @@ void board(int x, int y, State state) {
 				cout << "#";
 				printed = true;
 			}
-			for (int k = 0; k < state->Ww.size(); k++) {
+			for (int k = 0; k < state->Ww.size(); k++) {							// Print werewolves
 				if (i == state->Ww.at(k)->get_position()->y && j == state->Ww.at(k)->get_position()->x) {
 					cout << 'w';
 					printed = true;
 					break;
 				}
 			}
-			for (int k = 0; k < state->Vp.size(); k++) {
+			for (int k = 0; k < state->Vp.size(); k++) {							// Print vampires
 				if (i == state->Vp.at(k)->get_position()->y && j == state->Vp.at(k)->get_position()->x) {
 					cout << 'v';
 					printed = true;
 					break;
 				}
-			}
+			}																		// Print Avatar
 			if (i == state->At.at(0)->get_position()->y && j == state->At.at(0)->get_position()->x) {
 				cout << "A";
 				printed = true;
 			}
-			for (int k = 0; k < state->Tr.size(); k++) {
+			for (int k = 0; k < state->Tr.size(); k++) {							// Print Trees
 				if (i == state->Tr.at(k)->get_position()->y && j == state->Tr.at(k)->get_position()->x) {
 					cout << "T";
 					printed = true;
 					break;
 				}
 			}
-			for (int k = 0; k < state->Wt.size(); k++) {
+			for (int k = 0; k < state->Wt.size(); k++) {							// Print Water
 				if (i == state->Wt.at(k)->get_position()->y && j == state->Wt.at(k)->get_position()->x) {
 					cout << "W";
 					printed = true;
 					break;
 				}
 			}
-			if (state->Pt.size() > 0) {
+			if (state->Pt.size() > 0) {												// Print Potion
 				if (i == state->Pt.at(0)->get_position()->y && j == state->Pt.at(0)->get_position()->x) {
 					cout << "P";
 					printed = true;
 				}
 			}
-			if (printed == false)
+			if (printed == false)													// If there is no object in this location then print "space"
 				cout << " ";
 		}
 		cout << endl;
 	}
-	cout << "Time: ";
+	cout << "Time: ";																// Print daytime so player knows when to help it's team
 	if (state->map->get_time()) {
 		cout << "Night";
 	}
@@ -861,5 +852,6 @@ void menu(State state) {
 	cout << "~MAIN MENU~" << endl << "Werewolves left: " << werewolves_left << endl << "Vampires left: " << vampires_left << endl;
 	cout << "Potions left: " << potions_left << endl;
 	cout << "*press 'p' to continue or press 'q' to exit game*" << endl;
+	cout << "*press 'h' to use a potion*" << endl;
 }
 

@@ -5,7 +5,7 @@ using namespace std;
 
 int main() {
 	int x, y;					// x = width of map, y = length/height of map
-	int timer = 0;
+	int timer = 0;				// Used for daytime
 	string team;
 
 	// Select dimensions of map
@@ -22,10 +22,7 @@ int main() {
 	cout << endl;
 
 	// Create map of the game
-	Map* ptr = new Map(y,x,false);
-	/*ptr->set_length(y);
-	ptr->set_width(x);
-	ptr->set_time(false);*/
+	Map* ptr = new Map(y , x, false);
 
 	// Create state of the game
 	State state = state_create(ptr);
@@ -65,7 +62,7 @@ int main() {
 			Sleep(500);											// After delay of 500 milliseconds
 			state_update(state);								// Update game state
 			timer++;
-			if (timer == 20) {
+			if (timer == 20) {									// After 20 updates, change time
 				if (state->map->get_time()) {
 					state->map->set_time(false);
 				}
@@ -117,9 +114,10 @@ int main() {
 		cout << "YOU QUIT :(" << endl;
 	}
 
-	//deallocation
+	//Deallocation
 
 	delete ptr;
+
 	delete state;
 
 	return 0;
